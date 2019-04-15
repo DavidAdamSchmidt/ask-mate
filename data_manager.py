@@ -1,6 +1,3 @@
-import csv
-
-
 ANSWERS_HEADER = [
     "id",
     "submission_time",
@@ -20,13 +17,3 @@ QUESTIONS_HEADER = [
     "message",
     "image"
 ]
-
-
-# read data from csv
-def read_csv():
-    pass
-
-
-# write data to csv
-def write_to_csv():
-    pass

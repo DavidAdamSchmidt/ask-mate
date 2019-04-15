@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, render_template
 
 app = Flask(__name__)
 
-
+@app.route("/")
 @app.route("/list")
 def route_questions_list():
     pass
