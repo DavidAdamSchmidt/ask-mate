@@ -2,9 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>AskMate | Question details</title>
 </head>
 <body>
-
+    {% if question %}
+        <h1>Question {{ question['id'] }}</h1>
+        <table>
+            <tr>
+            {% for header in question_headers %}
+                <th>{{ header }}</th>
+            {% endfor %}
+            </tr>
+            <tr>
+            {% for value in question.values() %}
+                <td>{{ value }}</td>
+            {% endfor %}
+            </tr>
+        </table>
+        <h2>Answers:</h2>
+        {% if answers %}
+            <table>
+                <tr>
+                {% for header in answer_headers %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+                </tr>
+                {% for answer in answers %}
+                    <tr>
+                        {% for value in answer.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>There are no answers for this question</p>
+        {% endif %}
+    {% else %}
+        <p>There is no question with id {{ question_id }}</p>
+    {% endif %}
 </body>
 </html>
