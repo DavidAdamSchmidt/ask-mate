@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 
-
+@app.route("/")
 @app.route("/list", methods=['GET', 'POST'])
 def route_questions_list():
     if request.method == 'POST':
