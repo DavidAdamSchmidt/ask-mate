@@ -9,8 +9,8 @@
         <h1>Question {{ question['id'] }}</h1>
         <table>
             <tr>
-            {% for header in question_headers %}
-                <th>{{ header }}</th>
+            {% for header in question.keys() %}
+                <th>{{ header.capitalize().replace('_', ' ') }}</th>
             {% endfor %}
             </tr>
             <tr>
@@ -23,8 +23,8 @@
         {% if answers %}
             <table>
                 <tr>
-                {% for header in answer_headers %}
-                    <th>{{ header }}</th>
+                {% for header in answers[0].keys() %}
+                    <th>{{ header.capitalize().replace('_', ' ') }}</th>
                 {% endfor %}
                 </tr>
                 {% for answer in answers %}

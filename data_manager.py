@@ -39,11 +39,6 @@ def get_question_by_id(question_id):
             return question
 
 
-def get_answers_by_question_id(qustion_id):
+def get_answers_by_question_id(question_id):
     answers = connection.read_csv("data/answer.csv")
-    return [x for x in answers if x["question_id"] == qustion_id]
-
-
-def convert_headers_to_user_friendly(headers):
-    for i in range(len(headers)):
-        headers[i] = headers[i].capitalize().replace("_", " ")
+    return [x for x in answers if x["question_id"] == question_id]
