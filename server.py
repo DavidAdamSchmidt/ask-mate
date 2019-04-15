@@ -1,13 +1,27 @@
 from flask import Flask, request, redirect, render_template
 import data_manager
+import time
 
 
 app = Flask(__name__)
 
 
-@app.route("/list")
+@app.route("/list", methods=['GET', 'POST'])
 def route_questions_list():
-    pass
+    if request.method == 'POST':
+        id_num = len(data_manager.read_csv('data/question.csv'))
+        submission_time = int(time.time())
+        view_number = 0
+        vote_number = 0
+        title = request.form['title']
+        message = request.form['message']
+        image = ''
+        fieldnames = ['id_num', 'submission_time', 'view_number', 'vote_number',
+                      'title', 'message', 'image']
+        headers = [id_num, submission_time, view_number, vote_number,
+                   title, message, image]
+        data_manager.write_to_csv('data/question.csv', headers, fieldnames)
+    return render_template('add_question.html')
 
 
 @app.route("/question/<question_id>")
@@ -22,7 +36,8 @@ def route_question_display(question_id):
 
 @app.route("/add-question")
 def route_question_add():
-    pass
+    return render_template('add_question.html')
+
 
 
 @app.route("/question/<question_id>/new-answer")

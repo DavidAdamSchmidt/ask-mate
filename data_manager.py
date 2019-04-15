@@ -23,13 +23,13 @@ QUESTIONS_HEADER = [
 
 
 # read data from csv
-def read_csv():
-    pass
+def read_csv(filename):
+    return connection.read_csv(filename)
 
 
 # write data to csv
-def write_to_csv():
-    pass
+def write_to_csv(filename, headers, fieldnames):
+    connection.write_to_csv(filename, headers, fieldnames)
 
 
 def get_question_by_id(question_id):
