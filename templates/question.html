@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>AskMate | Question details</title>
-</head>
-<body>
+{% extends 'layout.html' %}
+
+{% block title %}
+    Question details
+{% endblock %}
+
+{% block content %}
     {% if question %}
         <h1>Question {{ question['id'] }}</h1>
         <table>
@@ -41,5 +41,4 @@
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
-</body>
-</html>
+{% endblock %}
