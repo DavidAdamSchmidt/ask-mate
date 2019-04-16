@@ -57,3 +57,12 @@ def sort_by_any(filename, header_by, reverse_):
             if qna[header_by] == key:
                 sorted_table.append(qna)
     return sorted_table
+
+
+def delete_by_id(filename, id_to_del, id_type, headers):
+    table = connection.read_csv(filename)
+    table = [x for x in table if x[id_type] != id_to_del]
+    for row in table:
+        if int(row[id_type]) > int(id_to_del):
+            row[id_type] = int(row[id_type])-1
+    connection.write_data_(filename, table, headers)

@@ -30,11 +30,15 @@ def update_to_csv(filename, updated_qna, headers):
             if int(qna["id"]) == int(updated_qna["id"]):
                 for keys, values in qna.items():
                     qna[keys] = updated_qna[keys]
+    write_data_(filename, reader, headers)
+
+
+def write_data_(filename, table, headers):
     with open(filename, "w", newline="") as datafile:
         data = csv.DictWriter(datafile, fieldnames=headers, extrasaction='raise')
         data.writeheader()
-        for qna in reader:
-            data.writerow(qna)
+        for row in table:
+            data.writerow(row)
 
 
 def write_new_to_csv(filename, headers, new_qna):
