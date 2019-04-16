@@ -4,7 +4,7 @@ import csv
 # id_type refers to the key of the id which you want to refer to
 def get_latest_id(filename, id_type):
     new_id = 0
-    with open(filename, 'r+', newline='') as datafile:
+    with open(filename, 'r', newline='') as datafile:
         datafile.seek(0)
         reader = csv.DictReader(datafile)
         for row in reader:

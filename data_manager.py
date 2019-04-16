@@ -22,12 +22,11 @@ QUESTIONS_HEADER = [
 ]
 
 
-# read data from csv
+
 def read_csv(filename):
     return connection.read_csv(filename)
 
 
-# write data to csv
 def write_to_csv(filename, headers, fieldnames):
     connection.write_to_csv(filename, headers, fieldnames)
 
