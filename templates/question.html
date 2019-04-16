@@ -15,7 +15,11 @@
             </tr>
             <tr>
             {% for value in question.values() %}
-                <td>{{ value }}</td>
+                {% if value == question['image'] %}
+                    <td><img src="{{ value }}" width="120" height="90"></td>
+                {% else %}
+                    <td>{{ value }}</td>
+                {% endif %}
             {% endfor %}
             </tr>
         </table>
@@ -30,7 +34,11 @@
                 {% for answer in answers %}
                     <tr>
                         {% for value in answer.values() %}
-                            <td>{{ value }}</td>
+                            {% if value == answer['image'] %}
+                                <td><img src="{{ value }}" width="120" height="90"></td>
+                            {% else %}
+                                <td>{{ value }}</td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
                 {% endfor %}
