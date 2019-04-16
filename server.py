@@ -31,8 +31,7 @@ def route_question_add():
         title = request.form['title']
         message = request.form['message']
         image = ''
-        fieldnames = ['id_num', 'submission_time', 'view_number', 'vote_number',
-                      'title', 'message', 'image']
+        fieldnames = data_manager.QUESTIONS_HEADER
         headers = [id_num, submission_time, view_number, vote_number,
                    title, message, image]
         data_manager.write_to_csv('data/question.csv', headers, fieldnames)
