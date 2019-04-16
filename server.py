@@ -11,7 +11,7 @@ def route_questions_list():
     return render_template('index.html')
 
 
-@app.route("/question/<question_id>", methods=['GET', 'POST'])
+@app.route("/question/<question_id>")
 def route_question_display(question_id):
     template_name = "question.html"
     question = data_manager.get_question_by_id(question_id)
@@ -24,19 +24,19 @@ def route_question_display(question_id):
 @app.route("/add-question", methods=['GET', 'POST'])
 def route_question_add():
     if request.method == 'POST':
-        id_num = len(data_manager.read_csv('data/question.csv'))
+        question_id = len(data_manager.read_csv('data/question.csv'))
         submission_time = int(time.time())
         view_number = 0
         vote_number = 0
         title = request.form['title']
         message = request.form['message']
         image = ''
-        fieldnames = ['id_num', 'submission_time', 'view_number', 'vote_number',
+        fieldnames = ['question_id', 'submission_time', 'view_number', 'vote_number',
                       'title', 'message', 'image']
-        headers = [id_num, submission_time, view_number, vote_number,
+        headers = [question_id, submission_time, view_number, vote_number,
                    title, message, image]
         data_manager.write_to_csv('data/question.csv', headers, fieldnames)
-        return redirect('/question/%s' % id_num)
+        return redirect('/question/%s' % question_id)
     return render_template('add_question.html')
 
 

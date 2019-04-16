@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Add question</title>
 </head>
 <body>
+    <h1>Add a question</h1>
     <form action="/add-question" method="post">
-        <label for="title">Enter the title:</label><br>
-        <input id="title" type="text" name="title"><br>
-        <label for="message">Enter the question</label><br>
-        <input id="message" type="text" name="message"><br>
+        <label for="title"><strong>Enter the title:</strong></label><br>
+        <textarea id="title" type="text" rows="2" name="title"></textarea><br>
+        <br>
+        <label for="message"><strong>Enter the question:</strong></label><br>
+        <textarea id="message" type="text" rows="4" name="message"></textarea><br>
+        <br>
         <input type="submit" value="Submit your question">
     </form>
 </body>
