@@ -1,8 +1,10 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, url_for
 import data_manager
 import time
 
+
 app = Flask(__name__)
+
 
 @app.route("/")
 @app.route("/list")
@@ -16,10 +18,25 @@ def route_questions_list():
     return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
+@app.route("/question/<question_id>/vote-<operation>")
+def route_question_votes(question_id, operation):
+    increase_by = 1 if operation == "up" else -1
+    data_manager.update_vote_number(question_id, increase_by)
+    return redirect("/")
+
+
+@app.route("/answer/<answer_id>/vote-<operation>")
+def route_answer_votes(answer_id, operation):
+    increase_by = 1 if operation == "up" else -1
+    data_manager.update_vote_number(answer_id, increase_by, answer=True)
+    answer = data_manager.get_record_by_id(answer_id, answer=True)
+    return redirect(url_for("route_question_display", question_id=answer["question_id"]))
+
+
 @app.route("/question/<question_id>")
 def route_question_display(question_id):
     template_name = "question.html"
-    question = data_manager.get_question_by_id(question_id)
+    question = data_manager.get_record_by_id(question_id)
     if question is None:
         return render_template(template_name, question_id=question_id)
     answers = data_manager.get_answers_by_question_id(question_id)
@@ -52,7 +69,6 @@ def route_question_add():
         return redirect('/question/%s' % id)
     else:
         return render_template('add_question.html', id=id)
-
 
 
 if __name__ == "__main__":

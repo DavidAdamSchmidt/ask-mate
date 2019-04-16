@@ -3,22 +3,40 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <table cellpadding="25">
+    <table>
         <tr>
+            {% set new_direction = 'desc' if current_dir else 'asc' %}
             {% for key in question_list[0] %}
-             {% set new_direction = 'desc' if current_dir else 'asc' %}
-                <th><a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">{{ key }}</a></th>
+                <th>
+                    <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
+                        {{ key }}
+                    </a>
+                </th>
             {% endfor %}
         </tr>
         {% for question in question_list %}
             <tr>
-                {% for key, value in question.items() %}
+            {% for key, value in question.items() %}
                 {% if key == 'submission_time' %}
-                <td><a href="{{ url_for('route_question_display', question_id = question['id'])}}">{{ value }}</a></td>
+                    <td>
+                        <a href="{{ url_for('route_question_display', question_id = question['id']) }}">
+                            {{ value }}
+                        </a>
+                    </td>
                 {% else %}
-                <td>{{ value }}</td>
+                    <td>{{ value }}</td>
                 {% endif %}
-                {% endfor %}
+            {% endfor %}
+            {% for operation in ['up', 'down'] %}
+                <td>
+                    {% set url = url_for(
+                        'route_question_votes',
+                        question_id = question['id'],
+                        operation = operation
+                    ) %}
+                    <button><a href="{{ url }}">Vote {{ operation }}</a></button>
+                </td>
+            {% endfor %}
             </tr>
         {% endfor %}
     </table>

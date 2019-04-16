@@ -22,6 +22,16 @@ QUESTIONS_HEADER = [
 ]
 
 
+def update_vote_number(id_, increase_by, answer=False):
+    record = get_record_by_id(id_, answer=answer)
+    vote_number = int(record["vote_number"])
+    if vote_number > 0 or increase_by > 0:
+        record["vote_number"] = vote_number + increase_by
+    if answer:
+        connection.update_to_csv("data/answer.csv", record, ANSWERS_HEADER)
+    else:
+        connection.update_to_csv("data/question.csv", record, QUESTIONS_HEADER)
+
 
 def read_csv(filename):
     return connection.read_csv(filename)
@@ -31,11 +41,12 @@ def write_new_to_csv(filename, headers, fieldnames):
     connection.write_new_to_csv(filename, headers, fieldnames)
 
 
-def get_question_by_id(question_id):
-    questions = connection.read_csv("data/question.csv")
-    for question in questions:
-        if question["id"] == question_id:
-            return question
+def get_record_by_id(id_, answer=False):
+    filename = f"data/{'answer' if answer else 'question'}.csv"
+    records = connection.read_csv(filename)
+    for record in records:
+        if record["id"] == id_:
+            return record
 
 
 def get_answers_by_question_id(question_id):

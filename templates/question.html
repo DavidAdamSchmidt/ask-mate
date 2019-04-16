@@ -9,7 +9,7 @@
         <h1>Question {{ question['id'] }}</h1>
         <table>
             <tr>
-            {% for header in question.keys() %}
+            {% for header in question %}
                 <th>{{ header.capitalize().replace('_', ' ') }}</th>
             {% endfor %}
             </tr>
@@ -27,7 +27,7 @@
         {% if answers %}
             <table>
                 <tr>
-                {% for header in answers[0].keys() %}
+                {% for header in answers[0] %}
                     <th>{{ header.capitalize().replace('_', ' ') }}</th>
                 {% endfor %}
                 </tr>
@@ -39,6 +39,16 @@
                             {% else %}
                                 <td>{{ value }}</td>
                             {% endif %}
+                        {% endfor %}
+                        {% for operation in ['up', 'down'] %}
+                            <td>
+                                {% set url = url_for(
+                                    'route_answer_votes',
+                                    answer_id = answer['id'],
+                                    operation = operation
+                                ) %}
+                                <button><a href="{{ url }}">Vote {{ operation }}</a></button>
+                            </td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
