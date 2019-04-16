@@ -48,12 +48,12 @@ def sort_by_any(filename, header_by, reverse_):
     keys_to_sort, new_table = [], []
     for row in table:
         keys_to_sort.append(row[header_by])
-        temp_dict = {key:value for (key, value) in row.items()}
+        temp_dict = {key: value for (key, value) in row.items()}
         new_table.append(temp_dict)
     keys_to_sort = sorted(keys_to_sort, reverse=reverse_)
     sorted_table = []
     for key in keys_to_sort:
         for qna in new_table:
-            if int(qna[header_by]) == int(key):
+            if qna[header_by] == key:
                 sorted_table.append(qna)
     return sorted_table
