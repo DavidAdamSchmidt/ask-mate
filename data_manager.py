@@ -31,10 +31,14 @@ def write_new_to_csv(filename, headers, fieldnames):
     connection.write_new_to_csv(filename, headers, fieldnames)
 
 
+def update_to_csv(filename, updated_qna, headers):
+    connection.update_to_csv(filename, updated_qna, headers)
+
+
 def get_question_by_id(question_id):
     questions = connection.read_csv("data/question.csv")
     for question in questions:
-        if question["id"] == question_id:
+        if question["id"] == str(question_id):
             return question
 
 
