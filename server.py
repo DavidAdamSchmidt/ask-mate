@@ -21,6 +21,20 @@ def route_question_display(question_id):
     return render_template(template_name, question=question, answers=answers)
 
 
+@app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
+def route_add_answer(question_id):
+    if request.method == "POST":
+        new_answer = request.form.to_dict()
+        new_answer["id"] = len(data_manager.read_csv("data/answer.csv"))
+        new_answer["submission_time"] = int(time.time())
+        new_answer["vote_number"] = "0"
+        new_answer["question_id"] = question_id
+        headers = data_manager.ANSWERS_HEADER
+        data_manager.write_new_to_csv("data/answer.csv", headers, new_answer)
+        return redirect(f"/question/{question_id}")
+    return render_template("add_answer.html", question_id=question_id)
+
+
 @app.route("/add-question", methods=['GET', 'POST'])
 def route_question_add():
     id = len(data_manager.read_csv('data/question.csv'))

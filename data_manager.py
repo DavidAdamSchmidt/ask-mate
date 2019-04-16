@@ -45,3 +45,19 @@ def get_question_by_id(question_id):
 def get_answers_by_question_id(question_id):
     answers = connection.read_csv("data/answer.csv")
     return [x for x in answers if x["question_id"] == question_id]
+
+
+def sort_by_any(filename, header_by, reverse_):
+    table = connection.read_csv(filename)
+    keys_to_sort, new_table = [], []
+    for row in table:
+        keys_to_sort.append(row[header_by])
+        temp_dict = {key: value for (key, value) in row.items()}
+        new_table.append(temp_dict)
+    keys_to_sort = sorted(keys_to_sort, reverse=reverse_)
+    sorted_table = []
+    for key in keys_to_sort:
+        for qna in new_table:
+            if qna[header_by] == key:
+                sorted_table.append(qna)
+    return sorted_table
