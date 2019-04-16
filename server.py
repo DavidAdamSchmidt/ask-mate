@@ -7,8 +7,13 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
-    question_list = data_manager.sort_by_any("data/question.csv", "submission_time", True)
-    return render_template('index.html', question_list=question_list)
+    id_type = request.args.get("order_by")
+    if not id_type:
+        id_type = "submission_time"
+    direction_ = request.args.get("order_direction")
+    direction_ = True if direction_ == "asc" else False
+    question_list = data_manager.sort_by_any("data/question.csv", id_type, direction_)
+    return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
 @app.route("/question/<question_id>")
@@ -56,4 +61,4 @@ def route_post_answer(question_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=2000)

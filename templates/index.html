@@ -3,10 +3,11 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <table>
+    <table cellpadding="25">
         <tr>
             {% for key in question_list[0] %}
-                <th>{{ key }}</th>
+             {% set new_direction = 'desc' if current_dir else 'asc' %}
+                <th><a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">{{ key }}</a></th>
             {% endfor %}
         </tr>
         {% for question in question_list %}
