@@ -12,8 +12,12 @@
         </tr>
         {% for question in question_list %}
             <tr>
-                {% for value in question.values() %}
-                    <td>{{ value }}</td>
+                {% for key, value in question.items() %}
+                {% if key == 'submission_time' %}
+                <td><a href="{{ url_for('route_question_display', question_id = question['id'])}}">{{ value }}</a></td>
+                {% else %}
+                <td>{{ value }}</td>
+                {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
