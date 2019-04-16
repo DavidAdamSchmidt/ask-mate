@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Add new answer
+{% endblock %}
+
+{% block content %}
+    <h1>New answer for question {{ question_id}}</h1>
+    <form action="" method="post">
+        <label for="message">Please enter the answer:</label>
+        <textarea id="message" name="message" minlength="10"></textarea>
+        <label for="image">Please enter the path of an image:</label>
+        <input type="text" id="image" name="image">
+        <input type="submit" value="Add answer">
+    </form>
+{% endblock %}

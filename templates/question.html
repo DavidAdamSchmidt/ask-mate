@@ -38,6 +38,9 @@
         {% else %}
             <p>There are no answers for this question</p>
         {% endif %}
+        <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
+            Add a new answer for this question
+        </a>
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
