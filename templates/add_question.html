@@ -1,19 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add question</title>
-</head>
-<body>
-    <h1>Add a question</h1>
+{% extends 'layout.html' %}
+{% block title %}Add question{% endblock %}
+{% block content %}
+<h1>Add a question</h1>
     <form action="/add-question" method="post">
+        <input type="hidden" name="id" value="{{ id }}">
+        <input type="hidden" name="view_number" value="0">
+        <input type="hidden" name="vote_number" value="0">
         <label for="title"><strong>Enter the title:</strong></label><br>
         <textarea id="title" type="text" rows="2" name="title"></textarea><br>
         <br>
         <label for="message"><strong>Enter the question:</strong></label><br>
         <textarea id="message" type="text" rows="4" name="message"></textarea><br>
         <br>
+        <input type="hidden" name="image" value="">
         <input type="submit" value="Submit your question">
     </form>
-</body>
-</html>
+{% endblock %}

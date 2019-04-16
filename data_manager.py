@@ -27,8 +27,8 @@ def read_csv(filename):
     return connection.read_csv(filename)
 
 
-def write_to_csv(filename, headers, fieldnames):
-    connection.write_to_csv(filename, headers, fieldnames)
+def write_new_to_csv(filename, headers, fieldnames):
+    connection.write_new_to_csv(filename, headers, fieldnames)
 
 
 def get_question_by_id(question_id):
