@@ -2,13 +2,13 @@ from flask import Flask, request, redirect, render_template
 import data_manager
 import time
 
-
 app = Flask(__name__)
 
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
-    return render_template('index.html')
+    question_list = data_manager.sort_by_any("data/question.csv", "submission_time", True)
+    return render_template('index.html', question_list=question_list)
 
 
 @app.route("/question/<question_id>")
