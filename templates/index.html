@@ -9,7 +9,7 @@
             {% for key in question_list[0] %}
                 <th>
                     <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
-                        {{ key }}
+                        {{ key.capitalize().replace('_', ' ') }}
                     </a>
                 </th>
             {% endfor %}
@@ -27,17 +27,18 @@
                     <td>{{ value }}</td>
                 {% endif %}
             {% endfor %}
+                <td class="no-border">
             {% for operation in ['up', 'down'] %}
-                <td>
                     {% set url = url_for(
                         'route_question_votes',
                         question_id = question['id'],
                         operation = operation
                     ) %}
-                    <button><a href="{{ url }}">Vote {{ operation }}</a></button>
-                </td>
+                    <button class="{{ operation }}"><a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a></button>
             {% endfor %}
+                </td>
             </tr>
         {% endfor %}
     </table>
+    <a href="{{ url_for('route_question_add') }}">Ask a question</a>
 {% endblock %}

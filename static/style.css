@@ -1,0 +1,56 @@
+body {
+    background-color: linen;
+}
+
+table {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-collapse: collapse;
+    margin: 15px;
+}
+
+tr:nth-child(even) {
+    background-color: bisque;
+}
+
+th {
+    border: 3px solid black;
+    white-space: nowrap;
+    padding: 10px;
+}
+
+td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 10px;
+}
+
+td.no-border {
+    background-color: linen;
+    border: none;
+}
+
+button {
+    margin: 10px;
+    white-space: nowrap;
+}
+
+a {
+    text-decoration: none;
+}
+
+button.up {
+    background-color: green;
+}
+
+a.up, a.down {
+    color: white;
+}
+
+button.down {
+    background-color: red;
+}
+
+button:active {
+    transform: translateY(4px);
+}

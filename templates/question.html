@@ -50,6 +50,13 @@
                                 <button><a href="{{ url }}">Vote {{ operation }}</a></button>
                             </td>
                         {% endfor %}
+                        {% set url = url_for(
+                            'route_delete_answer',
+                            answer_id=answer['id']
+                            ) %}
+                        <td>
+                            <button><a href="{{ url }}">Delete this answer</a></button>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
@@ -58,7 +65,11 @@
         {% endif %}
         <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
             Add a new answer for this question
-        </a>
+        </a><br>
+        <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
+            Delete this question
+        </a><br>
+        <a href="/">Go back to the home page</a>
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}

@@ -56,24 +56,15 @@ def get_answers_by_question_id(question_id):
 
 def sort_by_any(filename, header_by, reverse_):
     table = connection.read_csv(filename)
-    keys_to_sort, new_table = [], []
-    for row in table:
-        keys_to_sort.append(row[header_by])
-        temp_dict = {key: value for (key, value) in row.items()}
-        new_table.append(temp_dict)
-    keys_to_sort = sorted(keys_to_sort, key=lambda item: int(item) if item.isdigit() else item, reverse=reverse_)
-    sorted_table = []
-    for key in keys_to_sort:
-        for qna in new_table:
-            if qna[header_by] == key:
-                sorted_table.append(qna)
-    return sorted_table
+    table.sort(key=lambda x: int(x[header_by]) if x[header_by].isdigit() else x[header_by], reverse=reverse_)
+    return table
 
 
-def delete_by_id(filename, id_to_del, id_type, headers):
+def delete_by_id(id_to_del, id_type, answer=False):
+    filename = f"data/{'answer' if answer else 'question'}.csv"
     table = connection.read_csv(filename)
     table = [x for x in table if x[id_type] != id_to_del]
     for row in table:
         if int(row[id_type]) > int(id_to_del):
             row[id_type] = int(row[id_type])-1
-    connection.write_data_(filename, table, headers)
+    connection.write_data_(filename, table, ANSWERS_HEADER if answer else QUESTIONS_HEADER)
