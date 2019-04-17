@@ -40,21 +40,9 @@
             <input type="submit" value="Edit question">
         </form>
         <p>
-            <span>
-                <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
-                    Add a new answer for this question
-                </a>
-            </span>
-            <span>
-                <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
-                    Delete this question
-                </a>
-            </span>
-            <span>
-                <a href="/">
-                    Back to homepage
-                </a>
-            </span>
+            <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
+                    Delete question
+            </a>
         </p>
         <h2>Answers:</h2>
         {% if answers %}
@@ -105,5 +93,15 @@
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
+        <p>
+            <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
+                Add new answer
+            </a>
+        </p>
+        <p>
+            <a href="/">
+                Back to homepage
+            </a>
+        </p>
     </div>
 {% endblock %}
