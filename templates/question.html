@@ -27,6 +27,16 @@
             {% endfor %}
             </tr>
         </table>
+        <form action="{{ url_for('route_question_edit', question_id=question['id']) }}" method="post">
+            <input type="hidden" name="question" value="{{ question }}"
+            <input type="hidden" name="id" value="{{ question['id'] }}">
+            <input type="hidden" name="view_number" value="{{ question['view_number'] }}">
+            <input type="hidden" name="vote_number" value="{{ question['vote_number'] }}">
+            <input id="title" type="hidden" name="title" value="{{question['title']}}">
+            <input id="message" type="hidden" name="message" value="{{question['message']}}">
+            <input id="image" type="hidden" name="image" value="{{question['image']}}" alt="picture related to question/answer">
+            <input type="submit" value="Edit question">
+        </form>
         <h2>Answers:</h2>
         {% if answers %}
             <table>
