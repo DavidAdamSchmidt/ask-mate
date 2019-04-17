@@ -24,12 +24,12 @@ def update_to_csv(filename, updated_qna, headers):
     for qna in reader:
         if "question_id" in headers:
             if int(qna["question_id"]) == int(updated_qna["question_id"]) and int(qna["id"]) == int(updated_qna["id"]):
-                for keys, values in qna.items():
-                    qna[keys] = updated_qna[keys]
+                for key, values in qna.items():
+                    qna[key] = updated_qna[key]
         else:
             if int(qna["id"]) == int(updated_qna["id"]):
-                for keys, values in qna.items():
-                    qna[keys] = updated_qna[keys]
+                for key, values in qna.items():
+                    qna[key] = updated_qna[key]
     write_data_(filename, reader, headers)
 
 
