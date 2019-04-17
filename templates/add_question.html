@@ -1,18 +1,21 @@
 {% extends 'layout.html' %}
-{% block title %}Add question{% endblock %}
+{% block title %}{% if question %}Update question{% else %}Add a question{% endif %}{% endblock %}
 {% block content %}
-<h1>Add a question</h1>
-    <form action="/add-question" method="post">
-        <input type="hidden" name="id" value="{{ id }}">
-        <input type="hidden" name="view_number" value="0">
-        <input type="hidden" name="vote_number" value="0">
+<h1>{% if question %}Update question{% else %}Add a question{% endif %}</h1>
+    <form action="{% if question %}/question/{{ question['id'] }}/edit{% else %}/add-question{% endif %}" method="post">
+        <input type="hidden" name="id" value="{% if question %}{{ question['id'] }}{% else %}{{ id }}{% endif %}">
+        <input type="hidden" name="view_number" value="{% if question %}{{question['view_number']}}{% else %}0{% endif %}">
+        <input type="hidden" name="vote_number" value="{% if question %}{{question['vote_number']}}{% else %}0{% endif %}">
         <label for="title"><strong>Enter the title:</strong></label><br>
-        <textarea id="title" type="text" rows="2" name="title"></textarea><br>
+        <textarea id="title" type="text" name="title" >{% if question %}{{question['title']}}{% endif %}</textarea><br>
         <br>
         <label for="message"><strong>Enter the question:</strong></label><br>
-        <textarea id="message" type="text" rows="4" name="message"></textarea><br>
+        <textarea id="message" type="text" name="message">{% if question %}{{question['message']}}{% endif %}</textarea><br>
         <br>
-        <input type="hidden" name="image" value="">
-        <input type="submit" value="Submit your question">
+        <label for="image"><strong>Enter image URL:</strong></label><br>
+        <input id="image" type="text" name="image" value="{% if question %}{{question['image']}}{% endif %}" alt="picture related to question/answer"><br>
+        <input type="submit" value="{% if question %}Update your question{% else %}Submit your question{% endif %}">
     </form>
+    <br>
+    <a href="/">Back to homepage</a>
 {% endblock %}

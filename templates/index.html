@@ -34,7 +34,9 @@
                         question_id = question['id'],
                         operation = operation
                     ) %}
-                    <button class="{{ operation }}"><a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a></button>
+                    <button class="{{ operation }}">
+                        <a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a>
+                    </button>
             {% endfor %}
                 </td>
             </tr>
