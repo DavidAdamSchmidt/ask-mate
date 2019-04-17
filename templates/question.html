@@ -76,8 +76,7 @@
         </a><br>
         <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
             Delete this question
-        </a><br>
-        <a href="/">Go back to the home page</a>
+        </a>
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
