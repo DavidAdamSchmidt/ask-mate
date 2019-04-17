@@ -85,3 +85,7 @@ textarea {
 .url {
    width: 300px;
 }
+
+label {
+    font-weight: bold;
+}

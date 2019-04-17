@@ -6,11 +6,11 @@
 
 {% block content %}
     <div>
-        <h1>New answer for question {{ question_id}}</h1>
+        <h1>Add a new answer for question {{ question_id}}</h1>
         <form action="" method="post">
             <p>
                 <span>
-                    <label for="message">Please enter the answer:</label>
+                    <label for="message">Enter the answer:</label>
                 </span>
                 <span>
                     <textarea id="message" name="message" minlength="10"></textarea>
@@ -18,15 +18,15 @@
             </p>
             <p>
                 <span>
-                    <label for="image">Please enter the path of an image:</label>
+                    <label for="image">Enter image URL:</label>
                 </span>
                 <span>
-                    <input type="text" id="image" name="image">
+                    <input type="text" id="image" name="image" class="url">
                 </span>
             </p>
             <p>
                 <span>
-                    <input type="submit" value="Add answer">
+                    <input type="submit" value="Submit your answer">
                 </span>
             </p>
         </form>

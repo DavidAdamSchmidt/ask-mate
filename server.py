@@ -36,8 +36,15 @@ def route_answer_votes(answer_id, operation):
     return redirect("")
 
 
-@app.route("/question/<question_id>")
+@app.route("/question/<question_id>", methods=['GET', 'POST'])
 def route_question_display(question_id):
+    if request.method == 'POST':
+        new_q = request.form.to_dict()
+        new_q['submission_time'] = int(time.time())
+        headers = data_manager.QUESTIONS_HEADER
+
+        data_manager.update_to_csv('data/question.csv', new_q, headers)
+        return redirect('/question/%s' % question_id)
     template_name = "question.html"
     question = data_manager.get_record_by_id(question_id)
     if question is None:
@@ -48,13 +55,6 @@ def route_question_display(question_id):
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
 def route_question_edit(question_id):
-    if request.method == 'POST':
-        new_q = request.form.to_dict()
-        new_q['submission_time'] = int(time.time())
-        headers = data_manager.QUESTIONS_HEADER
-
-        data_manager.update_to_csv('data/question.csv', new_q, headers)
-        return redirect('/question/%s' % question_id)
     question = data_manager.get_question_by_id(question_id)
     if question is None:
         return render_template('question.html', question_id=question_id)
@@ -108,4 +108,4 @@ def route_question_add():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=2000)
+    app.run(debug=True, port=8000)
