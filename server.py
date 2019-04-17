@@ -53,7 +53,7 @@ def route_question_display(question_id):
     return render_template(template_name, question=question, answers=answers)
 
 
-@app.route("/question/<question_id>/edit")
+@app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
 def route_question_edit(question_id):
     question = data_manager.get_question_by_id(question_id)
     if question is None:
