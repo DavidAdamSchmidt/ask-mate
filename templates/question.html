@@ -49,20 +49,20 @@
                             {% endif %}
                         {% endfor %}
                         {% for operation in ['up', 'down'] %}
-                            <td>
+                            <td class="no-border">
                                 {% set url = url_for(
                                     'route_answer_votes',
                                     answer_id = answer['id'],
                                     operation = operation
                                 ) %}
-                                <button><a href="{{ url }}">Vote {{ operation }}</a></button>
+                                <button class="{{ operation }}"><a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a></button>
                             </td>
                         {% endfor %}
                         {% set url = url_for(
                             'route_delete_answer',
                             answer_id=answer['id']
                             ) %}
-                        <td>
+                        <td class="no-border">
                             <button><a href="{{ url }}">Delete this answer</a></button>
                         </td>
                     </tr>
