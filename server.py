@@ -43,6 +43,22 @@ def route_question_display(question_id):
     return render_template(template_name, question=question, answers=answers)
 
 
+@app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
+def route_question_edit(question_id):
+    if request.method == 'POST':
+        new_q = request.form.to_dict()
+        new_q['submission_time'] = int(time.time())
+        headers = data_manager.QUESTIONS_HEADER
+
+        data_manager.update_to_csv('data/question.csv', new_q, headers)
+        return redirect('/question/%s' % question_id)
+    question = data_manager.get_question_by_id(question_id)
+    if question is None:
+        return render_template('question.html', question_id=question_id)
+    else:
+        return render_template('add_question.html', question=question)
+
+
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def route_add_answer(question_id):
     if request.method == "POST":
