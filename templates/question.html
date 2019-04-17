@@ -16,7 +16,11 @@
             <tr>
             {% for value in question.values() %}
                 {% if value == question['image'] %}
-                    <td><img src="{{ value }}" width="120" height="90"></td>
+                    {% if value == "" %}
+                        <td><p>No picture available</p></td>
+                    {% else %}
+                        <td><img src="{{ value }}" width="120" height="90"></td>
+                    {% endif %}
                 {% else %}
                     <td>{{ value }}</td>
                 {% endif %}
@@ -35,7 +39,11 @@
                     <tr>
                         {% for value in answer.values() %}
                             {% if value == answer['image'] %}
-                                <td><img src="{{ value }}" width="120" height="90"></td>
+                                {% if value == "" %}
+                                    <td><p>No picture available</p></td>
+                                {% else %}
+                                    <td><img src="{{ value }}" width="120" height="90"></td>
+                                {% endif %}
                             {% else %}
                                 <td>{{ value }}</td>
                             {% endif %}
@@ -62,4 +70,6 @@
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
+    <br>
+    <a href="/">Back to homepage</a>
 {% endblock %}
