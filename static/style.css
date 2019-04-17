@@ -2,11 +2,16 @@ body {
     background-color: linen;
 }
 
+h1 {
+    text-align: center;
+}
+
 table {
     border-top: 1px solid black;
     border-left: 1px solid black;
     border-collapse: collapse;
-    margin: 15px;
+    margin: auto;
+    width: calc(100% - 40px)
 }
 
 tr:nth-child(even) {
@@ -14,6 +19,7 @@ tr:nth-child(even) {
 }
 
 th {
+    background-color: burlywood;
     border: 3px solid black;
     white-space: nowrap;
     padding: 10px;
@@ -30,7 +36,7 @@ td.no-border {
     border: none;
 }
 
-button {
+input[type=submit] {
     margin: 10px;
     white-space: nowrap;
 }
@@ -39,18 +45,31 @@ a {
     text-decoration: none;
 }
 
-button.up {
+a:hover, a:visited, a:link, a:active {
+    color: black;
+    text-decoration: underline;
+
+}
+
+.up {
     background-color: green;
-}
-
-a.up, a.down {
     color: white;
+    width: 150px;
 }
 
-button.down {
+.down {
     background-color: red;
+    color: white;
+    width: 150px;
 }
 
-button:active {
+.delete {
+    background-color: indigo;
+    color: white;
+    width: 150px;
+}
+
+
+input[type=submit].active {
     transform: translateY(4px);
 }

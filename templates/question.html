@@ -58,22 +58,24 @@
                                 <td>{{ value }}</td>
                             {% endif %}
                         {% endfor %}
+                        <td class="no-border">
                         {% for operation in ['up', 'down'] %}
-                            <td class="no-border">
                                 {% set url = url_for(
                                     'route_answer_votes',
                                     answer_id = answer['id'],
                                     operation = operation
                                 ) %}
-                                <button class="{{ operation }}"><a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a></button>
-                            </td>
+                            <form action="{{ url }}" method="post">
+                                <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
+                            </form>
                         {% endfor %}
                         {% set url = url_for(
                             'route_delete_answer',
                             answer_id=answer['id']
                             ) %}
-                        <td class="no-border">
-                            <button><a href="{{ url }}">Delete this answer</a></button>
+                            <form action="{{ url }}" method="post">
+                                <input type="submit" class="delete" value="Delete this answer">
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

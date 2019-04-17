@@ -26,8 +26,7 @@ QUESTIONS_HEADER = [
 def update_vote_number(id_, increase_by, answer=False):
     record = get_record_by_id(id_, answer=answer)
     vote_number = int(record["vote_number"])
-    if vote_number > 0 or increase_by > 0:
-        record["vote_number"] = vote_number + increase_by
+    record["vote_number"] = vote_number + increase_by
     if answer:
         connection.update_to_csv("data/answer.csv", record, ANSWERS_HEADER)
     else:
@@ -68,7 +67,8 @@ def get_answers_by_question_id(question_id):
 
 def sort_by_any(filename, header_by, reverse_):
     table = connection.read_csv(filename)
-    table.sort(key=lambda x: int(x[header_by]) if x[header_by].isdigit() else x[header_by], reverse=reverse_)
+    table.sort(key=lambda x: int(x[header_by]) if x[header_by].lstrip(
+        "-").isdigit() else x[header_by], reverse=reverse_)
     return table
 
 
@@ -78,5 +78,8 @@ def delete_by_id(id_to_del, id_type, answer=False):
     table = [x for x in table if x[id_type] != id_to_del]
     for row in table:
         if int(row[id_type]) > int(id_to_del):
-            row[id_type] = int(row[id_type])-1
-    connection.write_data_(filename, table, ANSWERS_HEADER if answer else QUESTIONS_HEADER)
+            row[id_type] = int(row[id_type]) - 1
+    connection.write_data_(
+        filename,
+        table,
+        ANSWERS_HEADER if answer else QUESTIONS_HEADER)
