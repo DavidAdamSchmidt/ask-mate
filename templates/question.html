@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    <div>
     {% if question %}
         <h1>Question {{ question['id'] }}</h1>
         <table>
@@ -27,6 +28,28 @@
             {% endfor %}
             </tr>
         </table>
+        <p>
+            <span>
+                <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
+                    Add a new answer for this question
+                </a>
+            </span>
+            <span>
+                <a href="{{ url_for('route_question_edit', question_id=question['id']) }}">
+                    Edit this question
+                </a>
+            </span>
+            <span>
+                <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
+                    Delete this question
+                </a>
+            </span>
+            <span>
+                <a href="/">
+                    Back to homepage
+                </a>
+            </span>
+        </p>
         <h2>Answers:</h2>
         {% if answers %}
             <table>
@@ -64,7 +87,7 @@
                             answer_id=answer['id']
                             ) %}
                             <form action="{{ url }}" method="post">
-                                <input type="submit" class="delete" value="Delete this answer">
+                                <input type="submit" class="delete" value="Delete">
                             </form>
                         </td>
                     </tr>
@@ -73,15 +96,8 @@
         {% else %}
             <p>There are no answers for this question</p>
         {% endif %}
-        <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
-            Add a new answer for this question
-        </a><br>
-        <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
-            Delete this question
-        </a>
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
-    <br>
-    <a href="/">Back to homepage</a>
+    </div>
 {% endblock %}

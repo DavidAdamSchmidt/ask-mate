@@ -5,13 +5,33 @@
 {% endblock %}
 
 {% block content %}
-    <h1>New answer for question {{ question_id}}</h1>
-    <form action="" method="post">
-        <label for="message">Please enter the answer:</label>
-        <textarea id="message" name="message" minlength="10"></textarea>
-        <label for="image">Please enter the path of an image:</label>
-        <input type="text" id="image" name="image">
-        <input type="submit" value="Add answer">
-    </form>
-    <a href="/">Back to homepage</a>
+    <div>
+        <h1>New answer for question {{ question_id}}</h1>
+        <form action="" method="post">
+            <p>
+                <span>
+                    <label for="message">Please enter the answer:</label>
+                </span>
+                <span>
+                    <textarea id="message" name="message" minlength="10"></textarea>
+                </span>
+            </p>
+            <p>
+                <span>
+                    <label for="image">Please enter the path of an image:</label>
+                </span>
+                <span>
+                    <input type="text" id="image" name="image">
+                </span>
+            </p>
+            <p>
+                <span>
+                    <input type="submit" value="Add answer">
+                </span>
+            </p>
+        </form>
+        <p>
+            <a href="/">Back to homepage</a>
+        </p>
+    </div>
 {% endblock %}
