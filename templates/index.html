@@ -4,6 +4,7 @@
 
 {% block content %}
     <table>
+        <h1>Questions</h1>
         <tr>
             {% set new_direction = 'desc' if current_dir else 'asc' %}
             {% for key in question_list[0] %}
@@ -17,7 +18,13 @@
         {% for question in question_list %}
             <tr>
             {% for key, value in question.items() %}
-                {% if key == 'submission_time' %}
+                {% if value == question['image'] %}
+                    {% if value == "" %}
+                        <td><p>No picture available</p></td>
+                    {% else %}
+                        <td><img src="{{ value }}" width="120" height="90"></td>
+                    {% endif %}
+                {% elif key == 'submission_time' %}
                     <td>
                         <a href="{{ url_for('route_question_display', question_id = question['id']) }}">
                             {{ value }}
@@ -34,9 +41,10 @@
                         question_id = question['id'],
                         operation = operation
                     ) %}
-                    <button class="{{ operation }}">
-                        <a class="{{ operation }}" href="{{ url }}">Vote {{ operation }}</a>
-                    </button>
+                    <form action="{{ url }}" method="post">
+                        <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
+                    </form>
+
             {% endfor %}
                 </td>
             </tr>
