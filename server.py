@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, render_template, url_for
 import data_manager
 import time
+import random
+
 
 
 app = Flask(__name__)
@@ -108,4 +110,5 @@ def route_question_add():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=2000)
+    port_ = random.randint(1000, 9999)
+    app.run(debug=True, port=port_)
