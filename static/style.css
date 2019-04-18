@@ -2,8 +2,12 @@ body {
     background-color: linen;
 }
 
-h1 {
-    text-align: center;
+div {
+    margin: 20px;
+}
+
+p span {
+    display: block;
 }
 
 table {
@@ -11,7 +15,7 @@ table {
     border-left: 1px solid black;
     border-collapse: collapse;
     margin: auto;
-    width: calc(100% - 40px)
+    width: 100%;
 }
 
 tr:nth-child(even) {
@@ -37,7 +41,6 @@ td.no-border {
 }
 
 input[type=submit] {
-    margin: 10px;
     white-space: nowrap;
 }
 
@@ -51,25 +54,38 @@ a:hover, a:visited, a:link, a:active {
 
 }
 
+.up, .down, .delete {
+    color: white;
+    width: 100px;
+    margin: 10px;
+}
+
 .up {
     background-color: green;
-    color: white;
-    width: 150px;
 }
 
 .down {
     background-color: red;
-    color: white;
-    width: 150px;
 }
 
 .delete {
     background-color: indigo;
-    color: white;
-    width: 150px;
 }
 
 
 input[type=submit].active {
     transform: translateY(4px);
+}
+
+textarea {
+  width: 300px;
+  height: 150px;
+}
+
+.url {
+   width: 300px;
+}
+
+label {
+    font-weight: bold;
 }

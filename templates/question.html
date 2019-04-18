@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    <div>
     {% if question %}
         <h1>Question {{ question['id'] }}</h1>
         <table>
@@ -28,15 +29,21 @@
             </tr>
         </table>
         <form action="{{ url_for('route_question_edit', question_id=question['id']) }}" method="post">
-            <input type="hidden" name="question" value="{{ question }}"
+            <input type="hidden" name="question" value="{{ question }}">
             <input type="hidden" name="id" value="{{ question['id'] }}">
             <input type="hidden" name="view_number" value="{{ question['view_number'] }}">
             <input type="hidden" name="vote_number" value="{{ question['vote_number'] }}">
             <input id="title" type="hidden" name="title" value="{{question['title']}}">
             <input id="message" type="hidden" name="message" value="{{question['message']}}">
-            <input id="image" type="hidden" name="image" value="{{question['image']}}" alt="picture related to question/answer">
+            <input id="image" type="hidden" name="image" value="{{question['image']}}"
+                   alt="picture related to question/answer">
             <input type="submit" value="Edit question">
         </form>
+        <p>
+            <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
+                    Delete question
+            </a>
+        </p>
         <h2>Answers:</h2>
         {% if answers %}
             <table>
@@ -74,7 +81,7 @@
                             answer_id=answer['id']
                             ) %}
                             <form action="{{ url }}" method="post">
-                                <input type="submit" class="delete" value="Delete this answer">
+                                <input type="submit" class="delete" value="Delete">
                             </form>
                         </td>
                     </tr>
@@ -83,15 +90,18 @@
         {% else %}
             <p>There are no answers for this question</p>
         {% endif %}
-        <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
-            Add a new answer for this question
-        </a><br>
-        <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
-            Delete this question
-        </a>
     {% else %}
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
-    <br>
-    <a href="/">Back to homepage</a>
+        <p>
+            <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
+                Add new answer
+            </a>
+        </p>
+        <p>
+            <a href="{{ url_for('route_questions_list') }}">
+                Back to homepage
+            </a>
+        </p>
+    </div>
 {% endblock %}
