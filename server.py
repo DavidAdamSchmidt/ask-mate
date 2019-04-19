@@ -110,5 +110,5 @@ def route_question_add():
 
 
 if __name__ == "__main__":
-    port_ = random.randint(1000, 9999)
+    port_ = random.randint(1024, 65536)
     app.run(debug=True, port=port_)
