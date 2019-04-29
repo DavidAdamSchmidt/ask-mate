@@ -54,7 +54,7 @@ a:hover, a:visited, a:link, a:active {
 
 }
 
-.up, .down, .delete {
+.up, .down, .edit, .delete {
     color: white;
     width: 100px;
     margin: 10px;
@@ -68,10 +68,13 @@ a:hover, a:visited, a:link, a:active {
     background-color: red;
 }
 
+.edit {
+    background-color: orange;
+}
+
 .delete {
     background-color: indigo;
 }
-
 
 input[type=submit].active {
     transform: translateY(4px);

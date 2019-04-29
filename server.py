@@ -75,7 +75,7 @@ def route_add_answer(question_id):
         headers = data_manager.ANSWERS_HEADER
         data_manager.write_new_to_csv("data/answer.csv", headers, new_answer)
         return redirect(f"/question/{question_id}")
-    return render_template("add_answer.html", question_id=question_id)
+    return render_template("answer.html", question_id=question_id)
 
 
 @app.route("/question/<question_id>/delete")
@@ -109,6 +109,17 @@ def route_question_add():
         return render_template('add_question.html', id=id)
 
 
+@app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
+def route_edit_answer(answer_id):
+    question_id = request.form.get('question_id')
+    if question_id is not None:
+        message = request.form.get('msg')
+        image = request.form.get('image')
+        data_manager.update_answers(message, image, answer_id)
+        return redirect(url_for('route_question_display', question_id=question_id))
+    answer = data_manager.get_answer_by_id(answer_id)
+    return render_template('answer.html', answer=answer[0], answer_id=answer_id)
+
+
 if __name__ == "__main__":
-    port_ = random.randint(1024, 65536)
-    app.run(debug=True, port=port_)
+    app.run(debug=True)

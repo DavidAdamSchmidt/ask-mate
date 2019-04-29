@@ -1,4 +1,5 @@
 import connection
+import database_common
 
 
 
@@ -60,9 +61,25 @@ def get_record_by_id(id_, answer=False):
             return record
 
 
-def get_answers_by_question_id(question_id):
-    answers = connection.read_csv("data/answer.csv")
-    return [x for x in answers if x["question_id"] == question_id]
+@database_common.connection_handler
+def get_answer_by_id(cursor, id):
+    cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
+    answer = cursor.fetchall()
+    return answer
+
+
+@database_common.connection_handler
+def get_answers_by_question_id(cursor, question_id):
+    cursor.execute(f"SELECT * FROM answer WHERE question_id={question_id}")
+    answers = cursor.fetchall()
+    return answers
+
+
+@database_common.connection_handler
+def update_answers(cursor, message, image_url, id):
+    cursor.execute(
+        f"""UPDATE answer SET message='{message}', image='{image_url}'
+            WHERE id={id}""")
 
 
 def sort_by_any(filename, header_by, reverse_):
