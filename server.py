@@ -109,6 +109,18 @@ def route_question_add():
         return render_template('add_question.html', id=id)
 
 
+@app.route("/search")
+def route_search_results():
+    search_phrase = request.args.get('search_phrase')
+    if search_phrase == '':
+        return redirect('/list')
+    else:
+        searched_value = f'%{search_phrase}%'
+        data_found = data_manager.get_data_from_database(searched_value)
+        return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
+
+
+
 if __name__ == "__main__":
     port_ = random.randint(1024, 65536)
     app.run(debug=True, port=port_)

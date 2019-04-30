@@ -1,4 +1,5 @@
 import connection
+import database_common
 
 
 
@@ -83,3 +84,16 @@ def delete_by_id(id_to_del, id_type, answer=False):
         filename,
         table,
         ANSWERS_HEADER if answer else QUESTIONS_HEADER)
+
+
+@database_common.connection_handler
+def get_data_from_database(cursor, search_phrase):
+    cursor.execute('''
+                   SELECT DISTINCT ON (title) title, question.message FROM question, answer
+                   WHERE title LIKE %(search_phrase)s OR question.message LIKE %(search_phrase)s
+                   OR answer.message LIKE %(search_phrase)s AND question.id=question_id;
+                   ''',
+                   {'search_phrase': search_phrase})
+    results = cursor.fetchall()
+
+    return results
