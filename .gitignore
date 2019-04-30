@@ -106,3 +106,6 @@ ENV/
 # pyfile
 testerFILE.py
 testfile.py
+
+# csv files
+data/

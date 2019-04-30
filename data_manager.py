@@ -1,56 +1,30 @@
-import connection
 import database_common
 
 
-
-ANSWERS_HEADER = [
-    "id",
-    "submission_time",
-    "vote_number",
-    "question_id",
-    "message",
-    "image"
-]
+@database_common.connection_handler
+def get_new_id(cursor, table):
+    cursor.execute(
+        f"""SELECT MAX(id) FROM {table};""")
+    id = cursor.fetchall()
+    return id
 
 
-QUESTIONS_HEADER = [
-    "id",
-    "submission_time",
-    "view_number",
-    "vote_number",
-    "title",
-    "message",
-    "image"
-]
+@database_common.connection_handler
+def update_vote_number(cursor, table, op_change, id_):
+    cursor.execute(
+        f"""UPDATE {table} SET vote_number = vote_number {op_change}
+        WHERE id={id_};""")
 
 
-def update_vote_number(id_, increase_by, answer=False):
-    record = get_record_by_id(id_, answer=answer)
-    vote_number = int(record["vote_number"])
-    record["vote_number"] = vote_number + increase_by
-    if answer:
-        connection.update_to_csv("data/answer.csv", record, ANSWERS_HEADER)
-    else:
-        connection.update_to_csv("data/question.csv", record, QUESTIONS_HEADER)
+@database_common.connection_handler
+def insert_new_record(cursor, table, values):
+    cursor.execute(f"""INSERT INTO {table} VALUES ({values});""")
 
 
-def read_csv(filename):
-    return connection.read_csv(filename)
-
-
-def write_new_to_csv(filename, headers, fieldnames):
-    connection.write_new_to_csv(filename, headers, fieldnames)
-
-
-def update_to_csv(filename, updated_qna, headers):
-    connection.update_to_csv(filename, updated_qna, headers)
-
-
-def get_question_by_id(question_id):
-    questions = connection.read_csv("data/question.csv")
-    for question in questions:
-        if question["id"] == str(question_id):
-            return question
+@database_common.connection_handler
+def update_record(cursor, table, values, id_):
+    cursor.execute(
+        f"""UPDATE {table} SET {values} WHERE id={id_};""")
 
 
 @database_common.connection_handler
@@ -81,21 +55,16 @@ def update_answer(cursor, message, image_url, id):
             WHERE id={id}""")
 
 
-def sort_by_any(filename, header_by, reverse_):
-    table = connection.read_csv(filename)
-    table.sort(key=lambda x: int(x[header_by]) if x[header_by].lstrip(
-        "-").isdigit() else x[header_by], reverse=reverse_)
-    return table
+@database_common.connection_handler
+def sort_by_any(cursor, table, column, order):
+    order = 'ASC' if order is True else 'DESC'
+    cursor.execute(
+        f"""SELECT * FROM {table} ORDER BY {column} {order};""")
+    ordered_table = cursor.fetchall()
+    return ordered_table
 
 
-def delete_by_id(id_to_del, id_type, answer=False):
-    filename = f"data/{'answer' if answer else 'question'}.csv"
-    table = connection.read_csv(filename)
-    table = [x for x in table if x[id_type] != id_to_del]
-    for row in table:
-        if int(row[id_type]) > int(id_to_del):
-            row[id_type] = int(row[id_type]) - 1
-    connection.write_data_(
-        filename,
-        table,
-        ANSWERS_HEADER if answer else QUESTIONS_HEADER)
+@database_common.connection_handler
+def delete_by_id(cursor, table, id_):
+    cursor.execute(
+        f"""DELETE FROM {table} WHERE id={id_};""")
