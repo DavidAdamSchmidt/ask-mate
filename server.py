@@ -40,8 +40,6 @@ def route_answer_votes(answer_id, operation):
 def route_question_display(question_id):
     if request.method == 'POST':
         new_q = request.form.to_dict()
-        new_q['id'] = question_id
-        new_q['submission_time'] = int(time.time())
         data_manager.update_question(new_q['title'], new_q['message'], new_q['image'], question_id)
         return redirect('/question/%s' % question_id)
     template_name = "question.html"

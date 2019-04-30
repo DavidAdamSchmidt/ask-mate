@@ -23,15 +23,16 @@
             {% for question in question_list %}
                 <tr>
                 {% for key, value in question.items() %}
-                    {% if value == question['image'] %}
-                        {% if value == "" %}
+                    {% if value == question.image %}
+                        {% if value is none %}
                             <td><p>No picture available</p></td>
                         {% else %}
-                            <td><img src="{{ value }}" width="120" height="90"></td>
+                            {% set url = url_for('static', filename=value) %}
+                            <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
                     {% elif key == 'submission_time' %}
                         <td>
-                            <a href="{{ url_for('route_question_display', question_id = question['id']) }}">
+                            <a href="{{ url_for('route_question_display', question_id = question.id) }}">
                                 {{ value }}
                             </a>
                         </td>
@@ -43,7 +44,7 @@
                 {% for operation in ['up', 'down'] %}
                         {% set url = url_for(
                             'route_question_votes',
-                            question_id = question['id'],
+                            question_id = question.id,
                             operation = operation
                         ) %}
                         <form action="{{ url }}" method="post">

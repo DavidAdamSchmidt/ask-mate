@@ -7,7 +7,7 @@
 {% block content %}
     <div>
     {% if question %}
-        <h1>Question {{ question['id'] }}</h1>
+        <h1>Question {{ question.id }}</h1>
         <table>
             <tr>
             {% for header in question %}
@@ -16,11 +16,12 @@
             </tr>
             <tr>
             {% for value in question.values() %}
-                {% if value == question['image'] %}
-                    {% if value == "" %}
+                {% if value == question.image %}
+                    {% if value is none %}
                         <td><p>No picture available</p></td>
                     {% else %}
-                        <td><img src="{{ value }}" width="120" height="90"></td>
+                        {% set url = url_for('static', filename=value) %}
+                        <td><img src="{{ url }}" alt="{{ value }}"></td>
                     {% endif %}
                 {% else %}
                     <td>{{ value }}</td>
@@ -28,12 +29,12 @@
             {% endfor %}
             </tr>
         </table>
-        <form action="{{ url_for('route_question_edit', question_id=question['id']) }}" method="post">
+        <form action="{{ url_for('route_question_edit', question_id=question.id) }}" method="post">
             <input type="hidden" name="question" value="{{ question }}">
             <input type="submit" value="Edit question">
         </form>
         <p>
-            <a href="{{ url_for('route_delete_question', question_id=question['id']) }}">
+            <a href="{{ url_for('route_delete_question', question_id=question.id) }}">
                     Delete question
             </a>
         </p>
@@ -49,10 +50,11 @@
                     <tr>
                         {% for value in answer.values() %}
                             {% if value == answer.image %}
-                                {% if value == "" %}
+                                {% if value is none %}
                                     <td><p>No picture available</p></td>
                                 {% else %}
-                                    <td><img src="{{ value }}" width="120" height="90"></td>
+                                    {% set url = url_for('static', filename=value) %}
+                                    <td><img src="{{ url }}" alt="{{ value }}"></td>
                                 {% endif %}
                             {% else %}
                                 <td>{{ value }}</td>
@@ -94,7 +96,7 @@
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
         <p>
-            {% set id = question['id'] if question else question_id %}
+            {% set id = question.id if question else question_id %}
             <a href="{{ url_for('route_add_answer', question_id=id) }}">
                 Add new answer
             </a>
@@ -119,7 +121,7 @@
         <p>There are no comments for this question</p>
     {% endif %}
         <p>
-            <a href="{{ url_for('route_add_comment_to_question', question_id=question['id']) }}">
+            <a href="{{ url_for('route_add_comment_to_question', question_id=question.id) }}">
                 Add new comment {{ question_id }}
             </a>
         </p>
