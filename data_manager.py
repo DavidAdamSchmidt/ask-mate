@@ -66,10 +66,19 @@ def add_comment(cursor, message, edited_count, id, parent_type):
 
 
 @database_common.connection_handler
-def sort_by_any(cursor, table, column, order):
+def sort_by_any(cursor, table, column, order, limit=None):
     order = 'ASC' if order is True else 'DESC'
-    cursor.execute(
-        f"""SELECT * FROM {table} ORDER BY {column} {order};""")
+    if limit is None:
+        cursor.execute(
+            f"""SELECT * FROM {table} ORDER BY {column} {order}""")
+    else:
+        cursor.execute(f"SELECT COUNT(*) FROM {table}")
+        row_num = cursor.fetchall()[0]['count']
+        if row_num < limit:
+            limit = row_num
+        cursor.execute(
+            f"""SELECT * FROM {table} ORDER BY {column} {order}
+                OFFSET {row_num - limit} FETCH FIRST {limit} ROWS ONLY;""")
     ordered_table = cursor.fetchall()
     return ordered_table
 

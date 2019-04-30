@@ -14,7 +14,8 @@ def route_questions_list():
         id_type = "submission_time"
     direction_ = request.args.get("order_direction")
     direction_ = True if direction_ == "asc" else False
-    question_list = data_manager.sort_by_any('question', id_type, direction_)
+    limit = 5 if request.path == '/' else None
+    question_list = data_manager.sort_by_any('question', id_type, direction_, limit)
     return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
@@ -75,7 +76,7 @@ def route_add_answer(question_id):
         new_answer["question_id"] = question_id
         data_manager.insert_new_record('answer', new_answer)
         return redirect(f"/question/{question_id}")
-    return render_template("answer.html", question=question_id, type='answer')
+    return render_template("answer.html", parent_id=question_id, parent='question', type='answer')
 
 
 @app.route("/question/<question_id>/delete")
