@@ -22,15 +22,15 @@
         </h1>
         <form action="" method="post">
             {% if parent_id %}
-                <input type="hidden" name="parent_id" value="{{ parent_id }}">
+                <input type="hidden" name="{{ parent +'_id' }}" value="{{ parent_id }}">
             {% endif %}
             <p>
                 <span>
-                    <label for="msg">Enter the {{ type }}:</label>
+                    <label for="message">Enter the {{ type }}:</label>
                 </span>
                 <span>
                     {% set message = data.message if data and data.message else '' %}
-                    <textarea name="msg" minlength="10" required>{{ message }}</textarea>
+                    <textarea name="message" minlength="10" required>{{ message }}</textarea>
                 </span>
             </p>
             <p>

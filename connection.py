@@ -1,47 +1,49 @@
-import csv
+# Creates a decorator to handle the database connection/cursor opening/closing.
+# Creates the cursor with RealDictCursor, thus it returns real dictionaries, where the column names are the keys.
+import os
+import psycopg2
+import psycopg2.extras
 
 
-# id_type refers to the key of the id which you want to refer to
-def get_latest_id(filename, id_type):
-    new_id = 0
-    with open(filename, 'r', newline='') as datafile:
-        datafile.seek(0)
-        reader = csv.DictReader(datafile)
-        for row in reader:
-            new_id = row[id_type]
-        new_id = int(new_id)+1
-    return new_id
+def get_connection_string():
+    # setup connection string
+    # to do this, please define these environment variables first
+    user_name = os.environ.get('PSQL_USER_NAME')
+    password = os.environ.get('PSQL_PASSWORD')
+    host = os.environ.get('PSQL_HOST')
+    database_name = os.environ.get('PSQL_DB_NAME')
+    env_variables_defined = user_name and password and host and database_name
+
+    if env_variables_defined:
+        # this string describes all info for psycopg2 to connect to the database
+        return 'postgresql://{user_name}:{password}@{host}/{database_name}'.format(
+            user_name=user_name,
+            password=password,
+            host=host,
+            database_name=database_name
+        )
+    else:
+        raise KeyError('Some necessary environment variable(s) are not defined')
 
 
-def read_csv(filename):
-    with open(filename, "r", newline="") as datafile:
-        reader = csv.DictReader(datafile)
-        return [row for row in reader]
+def open_database():
+    try:
+        connection_string = get_connection_string()
+        connection = psycopg2.connect(connection_string)
+        connection.autocommit = True
+    except psycopg2.DatabaseError as exception:
+        print('Database connection problem')
+        raise exception
+    return connection
 
 
-def update_to_csv(filename, updated_qna, headers):
-    reader = read_csv(filename)
-    for qna in reader:
-        if "question_id" in headers:
-            if int(qna["question_id"]) == int(updated_qna["question_id"]) and int(qna["id"]) == int(updated_qna["id"]):
-                for key, values in qna.items():
-                    qna[key] = updated_qna[key]
-        else:
-            if int(qna["id"]) == int(updated_qna["id"]):
-                for key, values in qna.items():
-                    qna[key] = updated_qna[key]
-    write_data_(filename, reader, headers)
-
-
-def write_data_(filename, table, headers):
-    with open(filename, "w", newline="") as datafile:
-        data = csv.DictWriter(datafile, fieldnames=headers, extrasaction='raise')
-        data.writeheader()
-        for row in table:
-            data.writerow(row)
-
-
-def write_new_to_csv(filename, headers, new_qna):
-    with open(filename, 'a', newline='') as datafile:
-        data = csv.DictWriter(datafile, fieldnames=headers, extrasaction='raise')
-        data.writerow(new_qna)
+def connection_handler(function):
+    def wrapper(*args, **kwargs):
+        connection = open_database()
+        # we set the cursor_factory parameter to return with a RealDictCursor cursor (cursor which provide dictionaries)
+        dict_cur = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        ret_value = function(dict_cur, *args, **kwargs)
+        dict_cur.close()
+        connection.close()
+        return ret_value
+    return wrapper

@@ -5,7 +5,6 @@
 <h1>{% if question %}Update question{% else %}Add a question{% endif %}</h1>
     <form action="{% if question %}{{ url_for('route_question_display', question_id=question['id']) }}
                   {% else %}{{ url_for('route_question_add') }}{% endif %}" method="post">
-        <input type="hidden" name="id" value="{% if question %}{{ question['id'] }}{% else %}{{ id }}{% endif %}">
         <input type="hidden" name="view_number" value="{% if question %}{{question['view_number']}}{% else %}0{% endif %}">
         <input type="hidden" name="vote_number" value="{% if question %}{{question['vote_number']}}{% else %}0{% endif %}">
         <label for="title">Enter the title:</label><br>
