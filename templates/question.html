@@ -48,7 +48,7 @@
                 {% for answer in answers %}
                     <tr>
                         {% for value in answer.values() %}
-                            {% if value == answer['image'] %}
+                            {% if value == answer.image %}
                                 {% if value == "" %}
                                     <td><p>No picture available</p></td>
                                 {% else %}
@@ -62,16 +62,23 @@
                         {% for operation in ['up', 'down'] %}
                                 {% set url = url_for(
                                     'route_answer_votes',
-                                    answer_id = answer['id'],
-                                    operation = operation
+                                    answer_id=answer.id,
+                                    operation=operation
                                 ) %}
                             <form action="{{ url }}" method="post">
                                 <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
                             </form>
                         {% endfor %}
                         {% set url = url_for(
+                            'route_edit_answer',
+                            answer_id=answer.id
+                            ) %}
+                            <form action="{{ url }}" method="post">
+                                <input type="submit" class="edit" value="Edit">
+                            </form>
+                        {% set url = url_for(
                             'route_delete_answer',
-                            answer_id=answer['id']
+                            answer_id=answer.id
                             ) %}
                             <form action="{{ url }}" method="post">
                                 <input type="submit" class="delete" value="Delete">
@@ -87,8 +94,33 @@
         <p>There is no question with id {{ question_id }}</p>
     {% endif %}
         <p>
-            <a href="{{ url_for('route_add_answer', question_id=question['id']) }}">
+            {% set id = question['id'] if question else question_id %}
+            <a href="{{ url_for('route_add_answer', question_id=id) }}">
                 Add new answer
+            </a>
+        </p>
+    <h3>Comments:</h3>
+    {% if comments %}
+        <table>
+            <tr>
+            {% for header in comments[0] %}
+                <th>{{ header.capitalize().replace('_', ' ') }}</th>
+            {% endfor %}
+            </tr>
+            {% for comment in comments %}
+                <tr>
+                    {% for value in comment.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no comments for this question</p>
+    {% endif %}
+        <p>
+            <a href="{{ url_for('route_add_comment_to_question', question_id=question['id']) }}">
+                Add new comment {{ question_id }}
             </a>
         </p>
         <p>

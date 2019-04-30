@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ ('Edit' if question_id or answer_id else 'Add new') + ' ' + type }}
+{% endblock %}
+
+{% block content %}
+    <div>
+        {% if data and data.question_id %}
+            {% set parent = 'question' %}
+            {% set parent_id = data.question_id %}
+        {% elif data and data.answer.id %}
+            {% set parent = 'answer' %}
+            {% set parent_id = data.answer.id %}
+        {% endif %}
+        <h1>
+            {% if id %}
+                Edit {{ type }} #{{ id }} for {{ parent }} #{{ parent_id }}
+            {% else %}
+                Add a new {{ type }} for {{ parent }} #{{ parent_id }}
+            {% endif %}
+        </h1>
+        <form action="" method="post">
+            {% if parent_id %}
+                <input type="hidden" name="parent_id" value="{{ parent_id }}">
+            {% endif %}
+            <p>
+                <span>
+                    <label for="msg">Enter the {{ type }}:</label>
+                </span>
+                <span>
+                    {% set message = data.message if data and data.message else '' %}
+                    <textarea name="msg" minlength="10" required>{{ message }}</textarea>
+                </span>
+            </p>
+            <p>
+            {% if type == 'answer' %}
+                <span>
+                    <label for="image">Enter image URL:</label>
+                </span>
+                <span>
+                    {% set url = data.image if data and data.image else '' %}
+                    <input type="text" id="image" name="image" class="url" value="{{ url }}">
+                </span>
+            {% elif data %}
+                <input type="hidden" name="edited_count" value="{{ data.edited_count }}">
+            {% endif %}
+            </p>
+            <p>
+                <span>
+                    {% set value = ('Edit' if id else 'Submit') + ' ' + type %}
+                    <input type="submit" value="{{ value }}">
+                </span>
+            </p>
+        </form>
+        <p>
+            <a href="{{ url_for('route_questions_list') }}">Back to homepage</a>
+        </p>
+    </div>
+{% endblock %}
