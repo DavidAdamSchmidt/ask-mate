@@ -99,28 +99,24 @@
                 Add new answer
             </a>
         </p>
+    <h3>Comments:</h3>
     {% if comments %}
-        <h3>Comments</h3>
         <table>
             <tr>
-            {% for header in question %}
+            {% for header in comments[0] %}
                 <th>{{ header.capitalize().replace('_', ' ') }}</th>
             {% endfor %}
             </tr>
-            <tr>
-            {% for value in question.values() %}
-                {% if value == question['image'] %}
-                    {% if value == "" %}
-                        <td><p>No picture available</p></td>
-                    {% else %}
-                        <td><img src="{{ value }}" width="120" height="90"></td>
-                    {% endif %}
-                {% else %}
-                    <td>{{ value }}</td>
-                {% endif %}
+            {% for comment in comments %}
+                <tr>
+                    {% for value in comment.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
             {% endfor %}
-            </tr>
         </table>
+    {% else %}
+        <p>There are no comments for this question</p>
     {% endif %}
         <p>
             <a href="{{ url_for('route_add_comment_to_question', question_id=question['id']) }}">

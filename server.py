@@ -107,8 +107,16 @@ def route_question_add():
         return render_template('add_question.html', id=id_)
 
 
-@app.route('/question/<question_id>/new-comment')
+@app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def route_add_comment_to_question(question_id):
+    if request.method == 'POST':
+        message = request.form.get('msg')
+        edited_count = request.form.get('edited_count')
+        if edited_count is None:
+            edited_count = 0
+        edited_count += 1
+        data_manager.add_comment(message, edited_count, question_id, 'question')
+        return redirect(url_for('route_question_display', question_id=question_id))
     return render_template('answer.html', parent_id=question_id, parent='question', type='comment')
 
 

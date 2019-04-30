@@ -34,14 +34,16 @@
                 </span>
             </p>
             <p>
+            {% if type == 'answer' %}
                 <span>
                     <label for="image">Enter image URL:</label>
                 </span>
-            {% if type == 'answer' %}
                 <span>
                     {% set url = data.image if data and data.image else '' %}
                     <input type="text" id="image" name="image" class="url" value="{{ url }}">
                 </span>
+            {% elif data %}
+                <input type="hidden" name="edited_count" value="{{ data.edited_count }}">
             {% endif %}
             </p>
             <p>

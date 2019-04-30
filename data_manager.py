@@ -1,4 +1,5 @@
 import database_common
+from datetime import datetime
 
 
 @database_common.connection_handler
@@ -28,15 +29,15 @@ def update_record(cursor, table, values, id_):
 
 
 @database_common.connection_handler
-def get_record_by_id(cursor, record_id, record_type):
-    cursor.execute(f"SELECT * FROM {record_type} WHERE id={record_id}")
+def get_record_by_id(cursor, record_id, table):
+    cursor.execute(f"SELECT * FROM {table} WHERE id={record_id}")
     record = cursor.fetchall()[0]
     return record
 
 
 @database_common.connection_handler
-def get_record_by_question_id(cursor, question_id, record_type):
-    cursor.execute(f"SELECT * FROM {record_type} WHERE question_id={question_id}")
+def get_record_by_question_id(cursor, question_id, table):
+    cursor.execute(f"SELECT * FROM {table} WHERE question_id={question_id}")
     answers = cursor.fetchall()
     return answers
 
@@ -53,6 +54,15 @@ def update_answer(cursor, message, image_url, id):
     cursor.execute(
         f"""UPDATE answer SET message='{message}', image='{image_url}'
             WHERE id={id}""")
+
+
+@database_common.connection_handler
+def add_comment(cursor, message, edited_count, id, parent_type):
+    cursor.execute(
+        f"""INSERT INTO comment
+            (message, edited_count, submission_time, {parent_type + '_id'})
+            VALUES
+            ('{message}', {edited_count}, '{datetime.now()}', {id})""")
 
 
 @database_common.connection_handler
