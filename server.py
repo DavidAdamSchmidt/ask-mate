@@ -133,5 +133,17 @@ def route_edit_answer(answer_id):
     return render_template('answer.html', data=answer, id=answer_id, type='answer')
 
 
+@app.route("/search")
+def route_search_results():
+    search_phrase = request.args.get('search_phrase')
+    if search_phrase == '':
+        return redirect('/list')
+    else:
+        searched_value = f'%{search_phrase}%'
+        data_found = data_manager.get_data_from_database(searched_value)
+        return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

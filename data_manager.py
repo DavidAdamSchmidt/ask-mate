@@ -1,3 +1,4 @@
+import connection
 import database_common
 from datetime import datetime
 
@@ -81,6 +82,32 @@ def sort_by_any(cursor, table, column, order, limit=None):
                 OFFSET {row_num - limit} FETCH FIRST {limit} ROWS ONLY;""")
     ordered_table = cursor.fetchall()
     return ordered_table
+
+
+def delete_by_id(id_to_del, id_type, answer=False):
+    filename = f"data/{'answer' if answer else 'question'}.csv"
+    table = connection.read_csv(filename)
+    table = [x for x in table if x[id_type] != id_to_del]
+    for row in table:
+        if int(row[id_type]) > int(id_to_del):
+            row[id_type] = int(row[id_type]) - 1
+    connection.write_data_(
+        filename,
+        table,
+        ANSWERS_HEADER if answer else QUESTIONS_HEADER)
+
+
+@database_common.connection_handler
+def get_data_from_database(cursor, search_phrase):
+    cursor.execute('''
+                   SELECT DISTINCT ON (title) title, question.message FROM question, answer
+                   WHERE title LIKE %(search_phrase)s OR question.message LIKE %(search_phrase)s
+                   OR answer.message LIKE %(search_phrase)s AND question.id=question_id;
+                   ''',
+                   {'search_phrase': search_phrase})
+    results = cursor.fetchall()
+
+    return results
 
 
 @database_common.connection_handler
