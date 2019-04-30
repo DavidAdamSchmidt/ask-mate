@@ -53,30 +53,29 @@ def get_question_by_id(question_id):
             return question
 
 
-def get_record_by_id(id_, answer=False):
-    filename = f"data/{'answer' if answer else 'question'}.csv"
-    records = connection.read_csv(filename)
-    for record in records:
-        if record["id"] == id_:
-            return record
+@database_common.connection_handler
+def get_record_by_id(cursor, record_id, record_type):
+    cursor.execute(f"SELECT * FROM {record_type} WHERE id={record_id}")
+    record = cursor.fetchall()[0]
+    return record
 
 
 @database_common.connection_handler
-def get_answer_by_id(cursor, id):
-    cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
-    answer = cursor.fetchall()
-    return answer
-
-
-@database_common.connection_handler
-def get_answers_by_question_id(cursor, question_id):
-    cursor.execute(f"SELECT * FROM answer WHERE question_id={question_id}")
+def get_record_by_question_id(cursor, question_id, record_type):
+    cursor.execute(f"SELECT * FROM {record_type} WHERE question_id={question_id}")
     answers = cursor.fetchall()
     return answers
 
 
 @database_common.connection_handler
-def update_answers(cursor, message, image_url, id):
+def get_answer_by_id(cursor, id):
+    cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
+    answer = cursor.fetchall()[0]
+    return answer
+
+
+@database_common.connection_handler
+def update_answer(cursor, message, image_url, id):
     cursor.execute(
         f"""UPDATE answer SET message='{message}', image='{image_url}'
             WHERE id={id}""")

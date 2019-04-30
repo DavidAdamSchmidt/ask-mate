@@ -1,8 +1,6 @@
 from flask import Flask, request, redirect, render_template, url_for
 import data_manager
 import time
-import random
-
 
 
 app = Flask(__name__)
@@ -48,11 +46,12 @@ def route_question_display(question_id):
         data_manager.update_to_csv('data/question.csv', new_q, headers)
         return redirect('/question/%s' % question_id)
     template_name = "question.html"
-    question = data_manager.get_record_by_id(question_id)
+    question = data_manager.get_record_by_id(question_id, 'question')
     if question is None:
         return render_template(template_name, question_id=question_id)
-    answers = data_manager.get_answers_by_question_id(question_id)
-    return render_template(template_name, question=question, answers=answers)
+    answers = data_manager.get_record_by_question_id(question_id, 'answer')
+    comments = data_manager.get_record_by_question_id(question_id, 'comment')
+    return render_template(template_name, question=question, answers=answers, comments=comments)
 
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
@@ -75,7 +74,7 @@ def route_add_answer(question_id):
         headers = data_manager.ANSWERS_HEADER
         data_manager.write_new_to_csv("data/answer.csv", headers, new_answer)
         return redirect(f"/question/{question_id}")
-    return render_template("answer.html", question_id=question_id)
+    return render_template("answer.html", question=question_id, type='answer')
 
 
 @app.route("/question/<question_id>/delete")
@@ -109,16 +108,21 @@ def route_question_add():
         return render_template('add_question.html', id=id)
 
 
+@app.route('/question/<question_id>/new-comment')
+def route_add_comment_to_question(question_id):
+    return render_template('answer.html', parent_id=question_id, parent='question', type='comment')
+
+
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
 def route_edit_answer(answer_id):
     question_id = request.form.get('question_id')
     if question_id is not None:
         message = request.form.get('msg')
         image = request.form.get('image')
-        data_manager.update_answers(message, image, answer_id)
+        data_manager.update_answer(message, image, answer_id)
         return redirect(url_for('route_question_display', question_id=question_id))
     answer = data_manager.get_answer_by_id(answer_id)
-    return render_template('answer.html', answer=answer[0], answer_id=answer_id)
+    return render_template('answer.html', data=answer, id=answer_id, type='answer')
 
 
 if __name__ == "__main__":
