@@ -1,7 +1,5 @@
 from flask import Flask, request, redirect, render_template, url_for
 import data_manager
-import time
-from datetime import datetime
 
 
 app = Flask(__name__)
@@ -15,7 +13,8 @@ def route_questions_list():
         id_type = "submission_time"
     direction_ = request.args.get("order_direction")
     direction_ = True if direction_ == "asc" else False
-    question_list = data_manager.sort_by_any('question', id_type, direction_)
+    limit = 5 if request.path == '/' else None
+    question_list = data_manager.sort_by_any('question', id_type, direction_, limit)
     return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
@@ -68,7 +67,6 @@ def route_add_answer(question_id):
     default_vote = 0
     if request.method == "POST":
         new_answer = request.form.to_dict()
-        new_answer["submission_time"] = int(time.time())
         new_answer["vote_number"] = default_vote
         new_answer["question_id"] = question_id
         data_manager.insert_new_record('answer', new_answer)
@@ -124,6 +122,17 @@ def route_edit_answer(answer_id):
         return redirect(url_for('route_question_display', question_id=question_id))
     answer = data_manager.get_answer_by_id(answer_id)
     return render_template('add_edit.html', data=answer, id=answer_id, type='answer')
+
+
+@app.route("/search")
+def route_search_results():
+    search_phrase = request.args.get('search_phrase')
+    if search_phrase == '':
+        return redirect('/list')
+    else:
+        searched_value = f'%{search_phrase}%'
+        data_found = data_manager.get_data_from_database(searched_value)
+        return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
 if __name__ == "__main__":
