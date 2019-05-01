@@ -58,7 +58,7 @@ def route_question_display(question_id):
 
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
-def route_question_edit(question_id):
+def route_edit_question(question_id):
     question = data_manager.get_record_by_id(question_id, 'question')
     if question is None:
         return render_template('question.html', question_id=question_id)

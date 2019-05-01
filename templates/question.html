@@ -1,137 +1,98 @@
 {% extends 'layout.html' %}
 
+{% macro display_table(table, type) %}
+    <table>
+        <tr>
+        {% for header in table[0] %}
+            <th>{{ header.capitalize().replace('_', ' ') }}</th>
+        {% endfor %}
+        </tr>
+        {% for row in table %}
+            <tr>
+                {% for value in row.values() %}
+                    {% if value == row.image %}
+                        {% if value is none %}
+                            <td><p>No picture available</p></td>
+                        {% else %}
+                            {% set url = url_for('static', filename=value) %}
+                            <td><img src="{{ url }}" alt="{{ value }}"></td>
+                        {% endif %}
+                    {% else %}
+                        <td>{{ value }}</td>
+                    {% endif %}
+                {% endfor %}
+{#               <table>
+                    <tr>
+                        <td>{{ 'No rag added yet' if tag == None else tag['name'] }}</td>
+                        <td><a href="{{ url_for('add_edit_tag', question_id=question.id) }}">Add/Edit Rag</a></td>
+                        <td><a href="{{ url_for('delete_tag', tag=tag['id'], question_id=question.id) }}">Delete rag</a></td>
+                    </tr>
+                </table>
+#}
+                <td class="no-border">
+                {% if type in ('answer') %}
+                    {% for operation in ('up', 'down') %}
+                            {% set url = url_for(
+                                'route_answer_votes',
+                                answer_id=row.id,
+                                operation=operation
+                            ) %}
+                        <form action="{{ url }}" method="post">
+                            <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
+                        </form>
+                    {% endfor %}
+                {% endif %}
+                {% for to_do in ('edit', 'delete') %}
+                    {% if type == 'question' %}
+                        {% set url = url_for('route_%s_question' % to_do, question_id= row.id) %}
+                    {% elif type == 'answer' %}
+                        {% set url = url_for('route_%s_answer' % to_do, answer_id= row.id) %}
+                    {% endif %}
+                        <form action="{{ url }}" method="post">
+                            <input type="submit" class="{{ to_do }}" value="{{ to_do.capitalize() }}">
+                        </form>
+                {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{% macro add_new(type, suffix='') %}
+    <p>
+        {% set id = question.id if question else question_id %}
+        <a href="{{ url_for('route_add_{}{}'.format(type, suffix), question_id=id) }}">
+            Add new {{ type }}
+        </a>
+    </p>
+{% endmacro %}
+
 {% block title %}
     Question details
 {% endblock %}
 
 {% block content %}
     <div>
-    {% if question %}
-        <h1>Question {{ question.id }}</h1>
-        <table>
-            <tr>
-            {% for header in question %}
-                <th>{{ header.capitalize().replace('_', ' ') }}</th>
-            {% endfor %}
-            </tr>
-            <tr>
-            {% for value in question.values() %}
-                {% if value == question.image %}
-                    {% if value is none %}
-                        <td><p>No picture available</p></td>
-                    {% else %}
-                        {% set url = url_for('static', filename=value) %}
-                        <td><img src="{{ url }}" alt="{{ value }}"></td>
-                    {% endif %}
-                {% else %}
-                    <td>{{ value }}</td>
-                {% endif %}
-            {% endfor %}
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td>{{ 'No rag added yet' if tag == None else tag['name'] }}</td>
-                <td><a href="{{ url_for('add_edit_tag', question_id=question.id) }}">Add/Edit Rag</a></td>
-                <td><a href="{{ url_for('delete_tag', tag=tag['id'], question_id=question.id) }}">Delete rag</a></td>
-            </tr>
-        </table>
-        <form action="{{ url_for('route_question_edit', question_id=question.id) }}" method="post">
-            <input type="hidden" name="question" value="{{ question }}">
-            <input type="submit" value="Edit question">
-        </form>
-        <p>
-            <a href="{{ url_for('route_delete_question', question_id=question.id) }}">
-                    Delete question
-            </a>
-        </p>
-        <h2>Answers:</h2>
+        {% if question %}
+            <h1>Question {{ question.id }}</h1>
+                {{ display_table([question], 'question') }}
+        {% else %}
+            <p>There is no question with id {{ question_id }}</p>
+        {% endif %}
         {% if answers %}
-            <table>
-                <tr>
-                {% for header in answers[0] %}
-                    <th>{{ header.capitalize().replace('_', ' ') }}</th>
-                {% endfor %}
-                </tr>
-                {% for answer in answers %}
-                    <tr>
-                        {% for value in answer.values() %}
-                            {% if value == answer.image %}
-                                {% if value is none %}
-                                    <td><p>No picture available</p></td>
-                                {% else %}
-                                    {% set url = url_for('static', filename=value) %}
-                                    <td><img src="{{ url }}" alt="{{ value }}"></td>
-                                {% endif %}
-                            {% else %}
-                                <td>{{ value }}</td>
-                            {% endif %}
-                        {% endfor %}
-                        <td class="no-border">
-                        {% for operation in ['up', 'down'] %}
-                                {% set url = url_for(
-                                    'route_answer_votes',
-                                    answer_id=answer.id,
-                                    operation=operation
-                                ) %}
-                            <form action="{{ url }}" method="post">
-                                <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
-                            </form>
-                        {% endfor %}
-                        {% set url = url_for(
-                            'route_edit_answer',
-                            answer_id=answer.id
-                            ) %}
-                            <form action="{{ url }}" method="post">
-                                <input type="submit" class="edit" value="Edit">
-                            </form>
-                        {% set url = url_for(
-                            'route_delete_answer',
-                            answer_id=answer.id
-                            ) %}
-                            <form action="{{ url }}" method="post">
-                                <input type="submit" class="delete" value="Delete">
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+            <h2>Answers</h2>
+            {{ display_table(answers, 'answer') }}
         {% else %}
             <p>There are no answers for this question</p>
         {% endif %}
-    {% else %}
-        <p>There is no question with id {{ question_id }}</p>
-    {% endif %}
-        <p>
-            {% set id = question.id if question else question_id %}
-            <a href="{{ url_for('route_add_answer', question_id=id) }}">
-                Add new answer
-            </a>
-        </p>
-    <h3>Comments:</h3>
-    {% if comments %}
-        <table>
-            <tr>
-            {% for header in comments[0] %}
-                <th>{{ header.capitalize().replace('_', ' ') }}</th>
-            {% endfor %}
-            </tr>
-            {% for comment in comments %}
-                <tr>
-                    {% for value in comment.values() %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>There are no comments for this question</p>
-    {% endif %}
-        <p>
-            <a href="{{ url_for('route_add_comment_to_question', question_id=question.id) }}">
-                Add new comment {{ question_id }}
-            </a>
-        </p>
+        {{ add_new('answer') }}
+        <h3>Comments</h3>
+        {% if comments %}
+            {{ display_table(comments, 'comment') }}
+        {% else %}
+            <p>There are no comments for this question</p>
+        {% endif %}
+        {{ add_new('comment', '_to_question') }}
         <p>
             <a href="{{ url_for('route_questions_list') }}">
                 Back to homepage
