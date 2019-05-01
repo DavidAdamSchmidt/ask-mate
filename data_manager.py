@@ -104,3 +104,32 @@ def get_data_from_database(cursor, search_phrase):
 def delete_by_id(cursor, table, id_):
     cursor.execute(
         f"""DELETE FROM {table} WHERE id={id_};""")
+
+
+@connection.connection_handler
+def get_basic_tags(cursor):
+    basic_tags = []
+    cursor.execute(f"""SELECT name FROM tag WHERE id<=3;""")
+    tags = cursor.fetchall()
+    for key in tags:
+        basic_tags.append(key['name'])
+    return basic_tags
+
+
+@connection.connection_handler
+def insert_new_tag(cursor, new_tag):
+    cursor.execute(
+        f""" INSERT INTO tag (name) 
+        VALUES ('{new_tag['name']}')"""
+    )
+    new_tag_id = get_max_id('tag')
+    cursor.execute(
+        f""" INSERT INTO question_tag (question_id, tag_id) 
+        VALUES ('{new_tag['question_id']}', '{new_tag_id['max']}')"""
+    )
+
+@connection.connection_handler
+def delete_tags(cursor, question_id, tag_id ):
+    cursor.execute(
+        f"""DELETE FROM question_tag, tag WHERE question_id={question_id};
+            DELETE FROM tag WHERE id={tag_id};""")

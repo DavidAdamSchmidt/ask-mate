@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ 'Add\Edit Rag' }}
+{% endblock %}
+{% block content %}
+    <h1>Choose your Rag</h1>
+        <form action="{{ url_for('add_edit_tag', question_id=question_id) }}" method="post">
+            <input type="hidden" name="question_id" value="{{ question_id }}">
+            <label for="define_own">Define your own:</label>
+            <input name="define_own"><br>
+            <label for="select">Or choose from a pre-existing one:</label>
+            <select id="name" name="select">
+                {% for tag in tags %}
+                    <option value="{{ tag }}">{{ tag.capitalize() }}</option>
+                {%  endfor %}
+            </select><br>
+            <input type="submit" value="Add Rag">
+{% endblock %}

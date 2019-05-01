@@ -29,6 +29,13 @@
             {% endfor %}
             </tr>
         </table>
+        <table>
+            <tr>
+                <td>{{ 'No rag added yet' if tag == None else tag['name'] }}</td>
+                <td><a href="{{ url_for('add_edit_tag', question_id=question.id) }}">Add/Edit Rag</a></td>
+                <td><a href="{{ url_for('delete_tag', tag=tag['id'], question_id=question.id) }}">Delete rag</a></td>
+            </tr>
+        </table>
         <form action="{{ url_for('route_question_edit', question_id=question.id) }}" method="post">
             <input type="hidden" name="question" value="{{ question }}">
             <input type="submit" value="Edit question">
