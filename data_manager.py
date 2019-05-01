@@ -6,8 +6,8 @@ from datetime import datetime
 def get_max_id(cursor, table):
     cursor.execute(
         f"""SELECT MAX(id) FROM {table};""")
-    id = cursor.fetchall()
-    return id[0]
+    id = cursor.fetchone()
+    return id
 
 
 @connection.connection_handler
@@ -29,7 +29,7 @@ def insert_new_record(cursor, table, record):
 @connection.connection_handler
 def get_record_by_id(cursor, record_id, table):
     cursor.execute(f"SELECT * FROM {table} WHERE id={record_id}")
-    record = cursor.fetchall()[0]
+    record = cursor.fetchone()
     return record
 
 
@@ -43,7 +43,7 @@ def get_record_by_question_id(cursor, question_id, table):
 @connection.connection_handler
 def get_answer_by_id(cursor, id):
     cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
-    answer = cursor.fetchall()[0]
+    answer = cursor.fetchone()
     return answer
 
 

@@ -21,14 +21,15 @@
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
-{#               <table>
+                {% if type == 'question' %}
+                <table>
                     <tr>
-                        <td>{{ 'No rag added yet' if tag == None else tag['name'] }}</td>
-                        <td><a href="{{ url_for('add_edit_tag', question_id=question.id) }}">Add/Edit Rag</a></td>
-                        <td><a href="{{ url_for('delete_tag', tag=tag['id'], question_id=question.id) }}">Delete rag</a></td>
+                        <td>{{ tag.name if tag and tag.name else 'No rag added yet' }}</td>
+                        <td><a href="{{ url_for('add_edit_tag', question_id=row.id) }}">Add/Edit Rag</a></td>
+                        <td><a href="{{ url_for('delete_tag', tag=tag.id, question_id=row.id) }}">Delete rag</a></td>
                     </tr>
                 </table>
-#}
+                {% endif %}
                 <td class="no-border">
                 {% if type in ('answer') %}
                     {% for operation in ('up', 'down') %}
@@ -75,7 +76,7 @@
     <div>
         {% if question %}
             <h1>Question {{ question.id }}</h1>
-                {{ display_table([question], 'question') }}
+            {{ display_table([question], 'question') }}
         {% else %}
             <p>There is no question with id {{ question_id }}</p>
         {% endif %}
@@ -86,8 +87,8 @@
             <p>There are no answers for this question</p>
         {% endif %}
         {{ add_new('answer') }}
-        <h3>Comments</h3>
         {% if comments %}
+            <h3>Comments</h3>
             {{ display_table(comments, 'comment') }}
         {% else %}
             <p>There are no comments for this question</p>
