@@ -64,16 +64,32 @@ a:hover, a:visited, a:link, a:active {
     background-color: green;
 }
 
+.up:hover {
+    background-color: #00b000;
+}
+
 .down {
     background-color: red;
+}
+
+.down:hover {
+    background-color: #ff6147;
 }
 
 .edit {
     background-color: orange;
 }
 
+.edit:hover {
+    background-color: #ffc500
+}
+
 .delete {
     background-color: indigo;
+}
+
+.delete:hover {
+    background-color: #6a5acd;
 }
 
 input[type=submit].active {

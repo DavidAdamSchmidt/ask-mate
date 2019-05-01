@@ -36,7 +36,7 @@
             <p>
             {% if type == 'answer' %}
                 <span>
-                    <label for="image">Enter image URL:</label>
+                    <label for="image">Enter image path:</label>
                 </span>
                 <span>
                     {% set url = data.image if data and data.image else '' %}
@@ -53,8 +53,5 @@
                 </span>
             </p>
         </form>
-        <p>
-            <a href="\list">Display all questions</a>
-        </p>
     </div>
 {% endblock %}

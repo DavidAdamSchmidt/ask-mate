@@ -13,7 +13,7 @@
         <label for="message">Enter the question:</label><br>
         <textarea id="message" name="message">{% if question %}{{question['message']}}{% endif %}</textarea><br>
         <br>
-        <label for="image">Enter image URL:</label><br>
+        <label for="image">Enter image path:</label><br>
         <input id="image" class="url" name="image" value="{% if question %}{{question['image']}}{% endif %}"><br><br>
         <input type="submit" value="{% if question %}Update your question{% else %}Submit your question{% endif %}">
     </form>

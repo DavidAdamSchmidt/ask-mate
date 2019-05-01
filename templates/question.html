@@ -21,15 +21,6 @@
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
-                {% if type == 'question' %}
-                <table>
-                    <tr>
-                        <td>{{ tag.name if tag and tag.name else 'No rag added yet' }}</td>
-                        <td><a href="{{ url_for('add_edit_tag', question_id=row.id) }}">Add/Edit Rag</a></td>
-                        <td><a href="{{ url_for('delete_tag', tag=tag.id, question_id=row.id) }}">Delete rag</a></td>
-                    </tr>
-                </table>
-                {% endif %}
                 <td class="no-border">
                 {% if type in ('answer') %}
                     {% for operation in ('up', 'down') %}
@@ -56,6 +47,23 @@
                 </td>
             </tr>
         {% endfor %}
+        {% if type == 'question' %}
+            <tr>
+                <td colspan="2">
+                    {{ tag.name if tag and tag.name else 'No rag added yet' }}
+                </td>
+                <td colspan="3">
+                    <a href="{{ url_for('add_edit_tag', question_id=table[0].id) }}">
+                        Add/Edit Rag
+                    </a>
+                </td>
+                <td colspan="2">
+                    <a href="{{ url_for('delete_tag', tag=tag.id, question_id=table[0].id) }}">
+                        Delete rag
+                    </a>
+                </td>
+            </tr>
+        {% endif %}
     </table>
 {% endmacro %}
 
@@ -75,7 +83,7 @@
 {% block content %}
     <div>
         {% if question %}
-            <h1>Question {{ question.id }}</h1>
+            <h1>Question #{{ question.id }}</h1>
             {{ display_table([question], 'question') }}
         {% else %}
             <p>There is no question with id {{ question_id }}</p>
