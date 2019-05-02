@@ -129,3 +129,15 @@ img:hover {
 #delete:hover {
     transform: scale(2);
 }
+
+#search_phrase {
+    position: absolute;
+    top: 2em;
+    right: 1em;
+}
+
+#submit {
+    position: absolute;
+    top: 2em;
+    right: 15em;
+}

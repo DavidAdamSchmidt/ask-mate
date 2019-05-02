@@ -132,15 +132,13 @@ def route_search_results():
     if search_phrase == '':
         return redirect('/list')
     else:
-        searched_value = f'%{search_phrase}%'
-        data_found = data_manager.get_data_from_database(searched_value)
+        data_found = data_manager.get_search_results_from_database(search_phrase)
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
 @app.route('/comments/<comment_id>/delete')
 def route_delete_comment(comment_id):
-    parent_id = data_manager.get_parent_id_by_comment_id(comment_id)
-    parent_id = parent_id[0]
+    parent_id = data_manager.get_record_by_id(comment_id, 'comment')
     if parent_id['question_id'] == None:
         question_id = data_manager.get_answer_by_id(parent_id['answer_id'])
     else:

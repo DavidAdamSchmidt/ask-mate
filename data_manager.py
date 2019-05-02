@@ -43,13 +43,6 @@ def get_record_by_question_id(cursor, question_id, table):
 
 
 @connection.connection_handler
-def get_parent_id_by_comment_id(cursor, comment_id):
-    cursor.execute(f'''SELECT * FROM comment WHERE id={comment_id}''')
-    comment = cursor.fetchall()
-    return comment
-
-
-@connection.connection_handler
 def get_answer_by_id(cursor, id):
     cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
     answer = cursor.fetchone()
@@ -98,15 +91,14 @@ def sort_by_any(cursor, table, column, order, limit=None):
 
 
 @connection.connection_handler
-def get_data_from_database(cursor, search_phrase):
-    cursor.execute('''
+def get_search_results_from_database(cursor, search_phrase):
+    cursor.execute(f'''
                    SELECT DISTINCT ON (title) title, question.message FROM question, answer
-                   WHERE title LIKE %(search_phrase)s OR question.message LIKE %(search_phrase)s
-                   OR answer.message LIKE %(search_phrase)s AND question.id=question_id;
-                   ''',
-                   {'search_phrase': search_phrase})
-    results = cursor.fetchall()
-    return results
+                   WHERE title LIKE '%{search_phrase}%' OR question.message LIKE '%{search_phrase}%'
+                   OR answer.message LIKE '%{search_phrase}%' AND question.id=question_id;
+                   ''')
+    search_results = cursor.fetchall()
+    return search_results
 
 
 @connection.connection_handler
