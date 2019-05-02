@@ -128,6 +128,19 @@ def delete_by_id(cursor, table, id_):
 
 
 @connection.connection_handler
+def delete_by_parent_id(cursor, table, id_, parent_type):
+    cursor.execute(
+        f"""DELETE FROM {table} WHERE {parent_type}_id={id_};""")
+
+
+@connection.connection_handler
+def get_answer_ids(cursor, question_id):
+    cursor.execute(f"SELECT id FROM answer WHERE question_id={question_id}")
+    answer_ids = cursor.fetchall()
+    return answer_ids
+
+
+@connection.connection_handler
 def insert_new_tag(cursor, new_tag):
     cursor.execute(
         f""" INSERT INTO tag (name) 

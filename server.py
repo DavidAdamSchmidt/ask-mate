@@ -87,6 +87,12 @@ def route_add_answer(question_id):
 
 @app.route("/question/<question_id>/delete", methods=["GET", "POST"])
 def route_delete_question(question_id):
+    answer_ids = data_manager.get_answer_ids(question_id)
+    for answer_id in answer_ids:
+        data_manager.delete_by_parent_id('comment', answer_id['id'], 'answer')
+    data_manager.delete_by_parent_id('answer', question_id, 'question')
+    data_manager.delete_by_parent_id('question_tag', question_id, 'question')
+    data_manager.delete_by_parent_id('comment', question_id, 'question')
     data_manager.delete_by_id('question', question_id)
     return redirect("/")
 
@@ -95,6 +101,7 @@ def route_delete_question(question_id):
 def route_delete_answer(answer_id):
     answer = data_manager.get_record_by_id(answer_id, 'answer')
     question_id = answer["question_id"]
+    data_manager.delete_by_parent_id('comment', answer_id, 'answer')
     data_manager.delete_by_id('answer', answer_id)
     return redirect(url_for("route_question_display", question_id=question_id))
 

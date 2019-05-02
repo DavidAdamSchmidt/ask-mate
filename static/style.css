@@ -128,12 +128,12 @@ img:hover {
     transform: scale(5);
 }
 
-#delit{
+.delit{
     height: 50px;
     margin: 0px;
     padding: 0px;
 }
 
-#delit:hover {
+.delit:hover {
     transform: scale(2);
 }
