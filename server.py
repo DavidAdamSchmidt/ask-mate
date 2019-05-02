@@ -84,7 +84,7 @@ def route_delete_question(question_id):
     return redirect("/")
 
 
-@app.route("/answer/<answer_id>/delete", methods=['GET', 'POST'])
+@app.route("/answer/<answer_id>/delete")
 def route_delete_answer(answer_id):
     answer = data_manager.get_record_by_id(answer_id, 'answer')
     question_id = answer["question_id"]
@@ -142,9 +142,27 @@ def route_search_results():
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
+@app.route('/comments/<comment_id>/delete')
+def route_delete_comment(comment_id):
+    parent_id = data_manager.get_parent_id_by_comment_id(comment_id)
+    parent_id = parent_id[0]
+    if parent_id['question_id'] == None:
+        question_id = data_manager.get_answer_by_id(parent_id['answer_id'])
+    else:
+        question_id = parent_id['question_id']
+    data_manager.delete_by_id('comment', comment_id)
+    return redirect(f'/question/{question_id}')
+
+
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
-def add_edit_tag(question_id):
-    tags = data_manager.get_basic_tags()
+def route_add_edit_tag(question_id):
+    tags = data_manager.BASIC_TAGS
+    tag_id = data_manager.get_record_by_question_id(question_id, 'question_tag')
+    if tag_id == []:
+        tag_id = None
+    else:
+        tag_id = tag_id[0]['tag_id']
+        tag_id = data_manager.get_record_by_id(tag_id, 'tag')
     if request.method == "POST":
         ntag = request.form.to_dict()
         question_id = ntag['question_id']
@@ -154,15 +172,18 @@ def add_edit_tag(question_id):
         else:
             del ntag['select']
             ntag['name'] = ntag.pop('define_own')
-        data_manager.insert_new_tag(ntag)
-        return redirect("/question/" + question_id)
-    return render_template('add_edit_tag.html', question_id=question_id, tags=tags)
+        if ntag['tag_id'] == "":
+            data_manager.insert_new_tag(ntag)
+        else:
+            data_manager.update_tag(ntag)
+        return redirect(f"/question/{question_id}")
+    return render_template('add_edit_tag.html', question_id=question_id, tags=tags, tag_id=tag_id)
 
 
 @app.route("/question/<question_id>/<tag>/delete")
-def delete_tag(question_id, tag):
+def route_delete_tag(question_id, tag):
     data_manager.delete_tags(question_id, tag)
-    return redirect("/question/" + question_id)
+    return redirect(f"/question/{question_id}")
 
 
 if __name__ == "__main__":

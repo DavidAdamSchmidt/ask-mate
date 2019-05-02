@@ -1,19 +1,20 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    {{ 'Add\Edit Rag' }}
+{% if tag_id == None %}Add a new Rag{% else %}Update Rag{% endif %}
 {% endblock %}
 {% block content %}
-    <h1>Choose your Rag</h1>
-        <form action="{{ url_for('add_edit_tag', question_id=question_id) }}" method="post">
+    <h1>{% if tag_id == None %}Add{% else %}Update{% endif %} Your Rag</h1>
+        <form action="{{ url_for('route_add_edit_tag', question_id=question_id) }}" method="post">
             <input type="hidden" name="question_id" value="{{ question_id }}">
-            <label for="define_own">Define your own:</label>
-            <input name="define_own"><br>
-            <label for="select">Or choose from a pre-existing one:</label>
-            <select id="name" name="select">
+            <input type="hidden" name="tag_id" value="{{ tag_id.id }}"
+            <label class="inputs" for="define_own">Define your own:</label>
+            <input class="inputs" name="define_own"><br>
+            <label class="inputs" for="select">Or choose from a pre-existing one:</label>
+            <select class="inputs" name="select">
                 {% for tag in tags %}
                     <option value="{{ tag }}">{{ tag.capitalize() }}</option>
                 {%  endfor %}
             </select><br>
-            <input type="submit" value="Add Rag">
+            <input id="rag_button" type="submit" value="{% if tag_id == None %}Add{% else %}Update{% endif %}">
 {% endblock %}

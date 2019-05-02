@@ -1,6 +1,8 @@
 import connection
 from datetime import datetime
 
+BASIC_TAGS = ['Python', 'CSS', 'HTML', 'JavaScript', 'Java', 'C#', 'C++', 'C']
+
 
 @connection.connection_handler
 def get_max_id(cursor, table):
@@ -41,6 +43,13 @@ def get_record_by_question_id(cursor, question_id, table):
     cursor.execute(f"SELECT * FROM {table} WHERE question_id={question_id}")
     answers = cursor.fetchall()
     return answers
+
+
+@connection.connection_handler
+def get_parent_id_by_comment_id(cursor, comment_id):
+    cursor.execute(f'''SELECT * FROM comment WHERE id={comment_id}''')
+    comment = cursor.fetchall()
+    return comment
 
 
 @connection.connection_handler
@@ -110,29 +119,24 @@ def delete_by_id(cursor, table, id_):
 
 
 @connection.connection_handler
-def get_basic_tags(cursor):
-    basic_tags = []
-    cursor.execute(f"""SELECT name FROM tag WHERE id<=3;""")
-    tags = cursor.fetchall()
-    for key in tags:
-        basic_tags.append(key['name'])
-    return basic_tags
-
-
-@connection.connection_handler
 def insert_new_tag(cursor, new_tag):
     cursor.execute(
         f""" INSERT INTO tag (name) 
-        VALUES ('{new_tag['name']}')"""
-    )
+        VALUES ('{new_tag['name']}')""")
     new_tag_id = get_max_id('tag')
     cursor.execute(
         f""" INSERT INTO question_tag (question_id, tag_id) 
-        VALUES ('{new_tag['question_id']}', '{new_tag_id['max']}')"""
-    )
+        VALUES ('{new_tag['question_id']}', '{new_tag_id['max']}')""")
+
 
 @connection.connection_handler
-def delete_tags(cursor, question_id, tag_id ):
+def delete_tags(cursor, question_id, tag):
+    tag = None
+    cursor.execute(f"DELETE FROM question_tag WHERE question_id={question_id};")
+
+
+@connection.connection_handler
+def update_tag(cursor, tag):
     cursor.execute(
-        f"""DELETE FROM question_tag, tag WHERE question_id={question_id};
-            DELETE FROM tag WHERE id={tag_id};""")
+                   f""" UPDATE tag SET name='{tag['name']}'
+        WHERE id={tag['tag_id']};""")

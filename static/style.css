@@ -120,9 +120,20 @@ label {
 img {
     width: 120px;
     height: 90px;
+    transition: transform .2s;
+    margin: 0 auto;
 }
 
-.comment-img {
-    width: 40px;
-    height: 40px;
+img:hover {
+    transform: scale(5);
+}
+
+#delete{
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#delete:hover {
+    transform: scale(2);
 }
