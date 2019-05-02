@@ -39,10 +39,10 @@ def get_record_by_id(cursor, record_id, table):
 
 
 @connection.connection_handler
-def get_record_by_question_id(cursor, question_id, table):
-    cursor.execute(f"SELECT * FROM {table} WHERE question_id={question_id}")
-    answers = cursor.fetchall()
-    return answers
+def get_records_by_parent_id(cursor, id, table, parent_type):
+    cursor.execute(f"SELECT * FROM {table} WHERE {parent_type}_id={id}")
+    records = cursor.fetchall()
+    return records
 
 
 @connection.connection_handler

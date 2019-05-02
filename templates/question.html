@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% macro display_table(table, type) %}
+{% macro display_table(table, type, main_type) %}
     <table>
         <tr>
         {% for header in table[0] %}
@@ -11,7 +11,7 @@
         </tr>
         {% for row in table %}
             <tr>
-                {% for value in row.values() %}
+                {% for key, value in row.items() %}
                     {% if value == row.image %}
                         {% if value is none %}
                             <td><p>No picture available</p></td>
@@ -19,12 +19,18 @@
                             {% set url = url_for('static', filename=value) %}
                             <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
+                    {% elif key == 'submission_time' and type != 'comment' %}
+                        <td>
+                            <a href="{{ url_for('route_answer_display', answer_id = row.id) }}">
+                                {{ value }}
+                            </a>
+                        </td>
                     {% else %}
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
                 <td class="no-border">
-                {% if type in ('answer') %}
+                {% if type not in (main_type, 'comment') %}
                     {% for operation in ('up', 'down') %}
                             {% set url = url_for(
                                 'route_answer_votes',
@@ -79,41 +85,42 @@
     </table>
 {% endmacro %}
 
-{% macro add_new(type, suffix='') %}
-    <p>
-        {% set id = question.id if question else question_id %}
-        <a href="{{ url_for('route_add_{}{}'.format(type, suffix), question_id=id) }}">
-            Add new {{ type }}
-        </a>
-    </p>
-{% endmacro %}
-
 {% block title %}
-    Question details
+    {{ 'Question details' if question or question_id else 'Answer details' }}
 {% endblock %}
 
 {% block content %}
+    {%  set main_type = 'question' if 'question' in request.path else 'answer' %}
     <div>
         {% if question %}
             <h1>Question #{{ question.id }}</h1>
-            {{ display_table([question], 'question') }}
+            {{ display_table([question], 'question', main_type) }}
+        {% elif answer %}
+            <h1>Answer #{{ answer.id }}</h1>
+            {{ display_table([answer], 'answer', main_type) }}
         {% else %}
             <p>There is no question with id {{ question_id }}</p>
         {% endif %}
         {% if answers %}
             <h2>Answers</h2>
-            {{ display_table(answers, 'answer') }}
-        {% else %}
+            {{ display_table(answers, 'answer', main_type) }}
+        {% elif main_type == 'question' %}
             <p>There are no answers for this question</p>
         {% endif %}
-        {{ add_new('answer') }}
+        {% if main_type == 'question' %}
+        <p>
+            {% set id = question.id if question else question_id %}
+            <a href="{{ url_for('route_add_answer', question_id=id) }}">
+                Add new answer
+            </a>
+        </p>
+        {% endif %}
         {% if comments %}
             <h3>Comments</h3>
-            {{ display_table(comments, 'comment') }}
+            {{ display_table(comments, 'comment', main_type) }}
         {% else %}
-            <p>There are no comments for this question</p>
+            <p>There are no comments for this {{ main_type }}</p>
         {% endif %}
-        {{ add_new('comment', '_to_question') }}
         <p>
             <a href="{{ url_for('route_questions_list') }}">
                 Back to homepage

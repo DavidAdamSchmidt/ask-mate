@@ -38,7 +38,7 @@ def route_answer_votes(answer_id, operation):
 
 @app.route("/question/<question_id>", methods=['GET', 'POST'])
 def route_question_display(question_id):
-    tag = data_manager.get_record_by_question_id(question_id, 'question_tag')
+    tag = data_manager.get_records_by_parent_id(question_id, 'question_tag', 'question')
     if tag == []:
         current_tag = None
     else:
@@ -52,9 +52,16 @@ def route_question_display(question_id):
     question = data_manager.get_record_by_id(question_id, 'question')
     if question is None:
         return render_template(template_name, question_id=question_id)
-    answers = data_manager.get_record_by_question_id(question_id, 'answer')
-    comments = data_manager.get_record_by_question_id(question_id, 'comment')
+    answers = data_manager.get_records_by_parent_id(question_id, 'answer', 'question')
+    comments = data_manager.get_records_by_parent_id(question_id, 'comment', 'question')
     return render_template(template_name, question=question, answers=answers, comments=comments, tag=current_tag)
+
+
+@app.route('/answer/<answer_id>')
+def route_answer_display(answer_id):
+    answer = data_manager.get_record_by_id(answer_id, 'answer')
+    comments = data_manager.get_records_by_parent_id(answer_id, 'comment', 'answer')
+    return render_template('question.html', answer=answer, comments=comments)
 
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
@@ -84,7 +91,7 @@ def route_delete_question(question_id):
     return redirect("/")
 
 
-@app.route("/answer/<answer_id>/delete")
+@app.route("/answer/<answer_id>/delete", methods=["GET", "POST"])
 def route_delete_answer(answer_id):
     answer = data_manager.get_record_by_id(answer_id, 'answer')
     question_id = answer["question_id"]
@@ -118,9 +125,7 @@ def route_add_comment_to_answer(answer_id):
     comment = request.form.to_dict()
     if comment:
         data_manager.insert_new_record("comment", comment)
-        answer_record = data_manager.get_record_by_id(answer_id, "answer")
-        question_id = answer_record["question_id"]
-        return redirect(url_for("route_question_display", question_id=question_id))
+        return redirect(url_for("route_answer_display", answer_id=answer_id))
     return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
 
 
@@ -141,7 +146,7 @@ def route_edit_comment(comment_id):
     message = request.form.get('message')
     if message:
         edited_count = request.form.get('edited_count')
-        edited_count = 1 if edited_count is None else int(edited_count) + 1
+        edited_count = 1 if edited_count == 'None' else int(edited_count) + 1
         new_values = {'edited_count': edited_count, 'message': message}
         data_manager.update_record_by_primary_id('comment', new_values, comment_id)
         parent_id = request.form.get('question_id')
@@ -151,11 +156,6 @@ def route_edit_comment(comment_id):
         return redirect(url_for('route_answer_display', answer_id=parent_id))
     comment = data_manager.get_record_by_id(comment_id, 'comment')
     return render_template('add_edit.html', data=comment, id=comment_id, type='comment')
-
-
-@app.route('/answer/<answer_id>')
-def route_answer_display(answer_id):
-    return '<h1>Not working yet</h1>'
 
 
 @app.route("/search")
@@ -171,20 +171,19 @@ def route_search_results():
 
 @app.route('/comments/<comment_id>/delete', methods=['POST', 'GET'])
 def route_delete_comment(comment_id):
-    parent_id = data_manager.get_parent_id_by_comment_id(comment_id)
-    parent_id = parent_id[0]
-    if parent_id['question_id'] == None:
-        question_id = data_manager.get_answer_by_id(parent_id['answer_id'])
-    else:
-        question_id = parent_id['question_id']
-    data_manager.delete_by_id('comment', comment_id)
-    return redirect(f'/question/{question_id}')
+    if request.method == 'POST':
+        comment = data_manager.get_record_by_id(comment_id, 'comment')
+        data_manager.delete_by_id('comment', comment_id)
+        if comment['question_id'] is not None:
+            return redirect(f"/question/{comment['question_id']}")
+        return redirect(f"/answer/{comment['answer_id']}")
+    return 'nope'
 
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
 def route_add_edit_tag(question_id):
     tags = data_manager.BASIC_TAGS
-    tag_id = data_manager.get_record_by_question_id(question_id, 'question_tag')
+    tag_id = data_manager.get_records_by_parent_id(question_id, 'question_tag', 'question')
     if tag_id == []:
         tag_id = None
     else:
