@@ -108,7 +108,6 @@ def route_question_add():
 def route_add_comment_to_question(question_id):
     comment = request.form.to_dict()
     if comment:
-        comment['edited_count'] = comment.get('edited_count', 0) + 1
         data_manager.insert_new_record('comment', comment)
         return redirect(url_for('route_question_display', question_id=question_id))
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
@@ -137,6 +136,28 @@ def route_edit_answer(answer_id):
     return render_template('add_edit.html', data=answer, id=answer_id, type='answer')
 
 
+@app.route('/comments/<comment_id>/edit', methods=['POST', 'GET'])
+def route_edit_comment(comment_id):
+    message = request.form.get('message')
+    if message:
+        edited_count = request.form.get('edited_count')
+        edited_count = 1 if edited_count is None else int(edited_count) + 1
+        new_values = {'edited_count': edited_count, 'message': message}
+        data_manager.update_record_by_primary_id('comment', new_values, comment_id)
+        parent_id = request.form.get('question_id')
+        if parent_id:
+            return redirect(url_for('route_question_display', question_id=parent_id))
+        parent_id = request.form.get('answer_id')
+        return redirect(url_for('route_answer_display', answer_id=parent_id))
+    comment = data_manager.get_record_by_id(comment_id, 'comment')
+    return render_template('add_edit.html', data=comment, id=comment_id, type='comment')
+
+
+@app.route('/answer/<answer_id>')
+def route_answer_display(answer_id):
+    return '<h1>Not working yet</h1>'
+
+
 @app.route("/search")
 def route_search_results():
     search_phrase = request.args.get('search_phrase')
@@ -158,11 +179,6 @@ def route_delete_comment(comment_id):
         question_id = parent_id['question_id']
     data_manager.delete_by_id('comment', comment_id)
     return redirect(f'/question/{question_id}')
-
-
-@app.route('/comments/<comment_id>/edit', methods=['POST', 'GET'])
-def route_edit_comment(comment_id):
-    return '<h1>Not working yet<h1>'
 
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])

@@ -60,6 +60,15 @@ def get_answer_by_id(cursor, id):
 
 
 @connection.connection_handler
+def update_record_by_primary_id(cursor, table, data, id):
+    command = f"UPDATE {table} SET "
+    for key, value in data.items():
+        command += f"{key}="
+        command += (f"'{value}'" if type(value) is str else f"{value}") + ", "
+    cursor.execute(command[:-2] + f" WHERE id={id}")
+
+
+@connection.connection_handler
 def update_answer(cursor, message, image_url, id):
     cursor.execute(
         f"""UPDATE answer SET message='{message}', image='{image_url}'

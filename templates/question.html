@@ -49,7 +49,6 @@
                     {% elif type == 'answer' %}
                         {% set url = url_for('route_%s_answer' % to_do, answer_id=row.id) %}
                     {% elif type == 'comment' %}
-                        {{ to_do }}
                         {% set url = url_for('route_%s_comment' % to_do, comment_id=row.id) %}
                     {% endif %}
                         {% set value = to_do.capitalize() + (' comment' if to_do == 'add' else '') %}

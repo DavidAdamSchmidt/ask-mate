@@ -6,12 +6,12 @@
 
 {% block content %}
     <div>
-        {% if data and data.question_id %}
+        {% if data and data.question_id != none %}
             {% set parent = 'question' %}
             {% set parent_id = data.question_id %}
-        {% elif data and data.answer.id %}
+        {% elif data and data.answer_id != none%}
             {% set parent = 'answer' %}
-            {% set parent_id = data.answer.id %}
+            {% set parent_id = data.answer_id %}
         {% endif %}
         <h1>
             {% if id %}
