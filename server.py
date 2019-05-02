@@ -86,12 +86,10 @@ def route_delete_question(question_id):
 
 @app.route("/answer/<answer_id>/delete", methods=['GET', 'POST'])
 def route_delete_answer(answer_id):
-    if request.method == "POST":
-        answer = data_manager.get_record_by_id(answer_id, answer=True)
-        question_id = answer["question_id"]
-        data_manager.delete_by_id('answer', answer_id,)
-        return redirect(url_for("route_question_display", question_id=question_id))
-    return redirect("/")
+    answer = data_manager.get_record_by_id(answer_id, 'answer')
+    question_id = answer["question_id"]
+    data_manager.delete_by_id('answer', answer_id)
+    return redirect(url_for("route_question_display", question_id=question_id))
 
 
 @app.route("/add-question", methods=['GET', 'POST'])
@@ -114,6 +112,11 @@ def route_add_comment_to_question(question_id):
         data_manager.insert_new_record('comment', comment)
         return redirect(url_for('route_question_display', question_id=question_id))
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
+
+
+@app.route('/answer/<answer_id>/new_comment', methods=['GET', 'POST'])
+def route_add_comment_to_answers(answer_id):
+    return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
