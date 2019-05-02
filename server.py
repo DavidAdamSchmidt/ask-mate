@@ -78,7 +78,7 @@ def route_add_answer(question_id):
     return render_template("add_edit.html", parent_id=question_id, parent='question', type='answer')
 
 
-@app.route("/question/<question_id>/delete")
+@app.route("/question/<question_id>/delete", methods=["GET", "POST"])
 def route_delete_question(question_id):
     data_manager.delete_by_id('question', question_id)
     return redirect("/")
@@ -106,8 +106,8 @@ def route_question_add():
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def route_add_comment_to_question(question_id):
-    if request.method == 'POST':
-        comment = request.form.to_dict()
+    comment = request.form.to_dict()
+    if comment:
         comment['edited_count'] = comment.get('edited_count', 0) + 1
         data_manager.insert_new_record('comment', comment)
         return redirect(url_for('route_question_display', question_id=question_id))
@@ -148,7 +148,7 @@ def route_search_results():
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
-@app.route('/comments/<comment_id>/delete')
+@app.route('/comments/<comment_id>/delete', methods=['POST', 'GET'])
 def route_delete_comment(comment_id):
     parent_id = data_manager.get_parent_id_by_comment_id(comment_id)
     parent_id = parent_id[0]
@@ -158,6 +158,11 @@ def route_delete_comment(comment_id):
         question_id = parent_id['question_id']
     data_manager.delete_by_id('comment', comment_id)
     return redirect(f'/question/{question_id}')
+
+
+@app.route('/comments/<comment_id>/edit', methods=['POST', 'GET'])
+def route_edit_comment(comment_id):
+    return '<h1>Not working yet<h1>'
 
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
