@@ -114,8 +114,14 @@ def route_add_comment_to_question(question_id):
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
 
 
-@app.route('/answer/<answer_id>/new_comment', methods=['GET', 'POST'])
-def route_add_comment_to_answers(answer_id):
+@app.route("/answer/<answer_id>/new_comment", methods=['GET', 'POST'])
+def route_add_comment_to_answer(answer_id):
+    comment = request.form.to_dict()
+    if comment:
+        data_manager.insert_new_record("comment", comment)
+        answer_record = data_manager.get_record_by_id(answer_id, "answer")
+        question_id = answer_record["question_id"]
+        return redirect(url_for("route_question_display", question_id=question_id))
     return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
 
 
