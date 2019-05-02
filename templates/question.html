@@ -53,13 +53,13 @@
                     {{ tag.name if tag and tag.name else 'No rag added yet' }}
                 </td>
                 <td colspan="3">
-                    <a href="{{ url_for('add_edit_tag', question_id=table[0].id) }}">
+                    <a href="{{ url_for('route_add_edit_tag', question_id=table[0].id) }}">
                         Add/Edit Rag
                     </a>
                 </td>
                 <td colspan="2">
-                    <a href="{{ url_for('delete_tag', tag=tag.id, question_id=table[0].id) }}">
-                        Delete rag
+                    <a href="{{ url_for('route_delete_tag', tag=tag.id, question_id=table[0].id) }}">
+                        <img id="delete" src="/static/images/delete.png" alt="X">
                     </a>
                 </td>
             </tr>
