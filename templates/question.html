@@ -4,7 +4,9 @@
     <table>
         <tr>
         {% for header in table[0] %}
-            <th>{{ header.capitalize().replace('_', ' ') }}</th>
+            <th>
+                {{ header.capitalize().replace('_', ' ') }}
+            </th>
         {% endfor %}
         </tr>
         {% for row in table %}
@@ -34,16 +36,18 @@
                         </form>
                     {% endfor %}
                 {% endif %}
-                {% for to_do in ('edit', 'delete') %}
-                    {% if type == 'question' %}
-                        {% set url = url_for('route_%s_question' % to_do, question_id= row.id) %}
+                {% set operations = ('edit', 'delete') if type == 'comment' else ('add', 'edit', 'delete') %}
+                {% for to_do in operations %}
+                    {% if to_do == 'add' %}
+                        {% set url = url_for('route_%s_comment_to_answers' % to_do, answer_id=row.id) %}
+                    {% elif type == 'question' %}
+                        {% set url = url_for('route_%s_question' % to_do, question_id=row.id) %}
                     {% elif type == 'answer' %}
-                        {% set url = url_for('route_%s_answer' % to_do, answer_id= row.id) %}
-                    {% elif type == 'comment' and to_do == 'delete' %}
-                        {% set url = url_for('route_%s_comment' % to_do, comment_id= row.id) %}
+                        {% set url = url_for('route_%s_answer' % to_do, answer_id=row.id) %}
                     {% endif %}
-                        <form action="{{ url }}" method="{{ 'post' if to_do == 'edit' else 'get' }}">
-                            <input type="submit" class="{{ to_do }}" value="{{ to_do.capitalize() }}">
+                        {% set value = to_do.capitalize() + (' comment' if to_do == 'add' else '') %}
+                        <form action="{{ url }}" method="{{ 'post' if to_do in ('add', 'edit') else 'get' }}">
+                            <input type="submit" class="{{ to_do }}" value="{{ value }}">
                         </form>
                 {% endfor %}
                 </td>

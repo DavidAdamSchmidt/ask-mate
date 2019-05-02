@@ -54,7 +54,7 @@ a:hover, a:visited, a:link, a:active {
 
 }
 
-.up, .down, .edit, .delete {
+.up, .down, .edit, .delete, .add {
     color: white;
     width: 100px;
     margin: 10px;
@@ -90,6 +90,14 @@ a:hover, a:visited, a:link, a:active {
 
 .delete:hover {
     background-color: #6a5acd;
+}
+
+.add {
+    background-color: dodgerblue;
+}
+
+.add:hover {
+    background-color: #6e90ff;
 }
 
 input[type=submit].active {

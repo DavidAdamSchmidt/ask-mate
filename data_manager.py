@@ -22,10 +22,13 @@ def update_vote_number(cursor, table, op_change, id_):
 @connection.connection_handler
 def insert_new_record(cursor, table, record):
     record['submission_time'] = str(datetime.now())
-    cursor.execute(
-        f"""INSERT INTO {table} 
-            {str(tuple(record.keys())).replace("'","")}
-            VALUES {tuple(record.values())};""")
+    command = f"""INSERT INTO {table} {str(tuple(record.keys())).replace("'","")} VALUES("""
+    for data in record.values():
+        if type(data) is str:
+            data = data.replace("'", "''")
+        command += (f"'{data}'" if type(data) is str else f"{data}") + ', '
+    command = command[:-2] + ')'
+    cursor.execute(command)
 
 
 @connection.connection_handler
@@ -87,7 +90,7 @@ def sort_by_any(cursor, table, column, order, limit=None):
             f"""SELECT * FROM {table} ORDER BY {column} {order}""")
     else:
         cursor.execute(f"SELECT COUNT(*) FROM {table}")
-        row_num = cursor.fetchall()[0]['count']
+        row_num = cursor.fetchone()['count']
         if row_num < limit:
             limit = row_num
         cursor.execute(
