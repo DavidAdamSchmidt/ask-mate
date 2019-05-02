@@ -114,6 +114,11 @@ def route_add_comment_to_question(question_id):
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
 
 
+@app.route('/answer/<answer_id>/new_comment', methods=['GET', 'POST'])
+def route_add_comment_to_answers(answer_id):
+    return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
+
+
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
 def route_edit_answer(answer_id):
     question_id = request.form.get('question_id')
