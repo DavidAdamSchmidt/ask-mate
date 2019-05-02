@@ -39,8 +39,10 @@
                         {% set url = url_for('route_%s_question' % to_do, question_id= row.id) %}
                     {% elif type == 'answer' %}
                         {% set url = url_for('route_%s_answer' % to_do, answer_id= row.id) %}
+                    {% elif type == 'comment' and to_do == 'delete' %}
+                        {% set url = url_for('route_%s_comment' % to_do, comment_id= row.id) %}
                     {% endif %}
-                        <form action="{{ url }}" method="post">
+                        <form action="{{ url }}" method="{{ 'post' if to_do == 'edit' else 'get' }}">
                             <input type="submit" class="{{ to_do }}" value="{{ to_do.capitalize() }}">
                         </form>
                 {% endfor %}

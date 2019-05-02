@@ -41,6 +41,13 @@ def get_record_by_question_id(cursor, question_id, table):
 
 
 @connection.connection_handler
+def get_parent_id_by_comment_id(cursor, comment_id):
+    cursor.execute(f'''SELECT * FROM comment WHERE id={comment_id}''')
+    comment = cursor.fetchall()
+    return comment
+
+
+@connection.connection_handler
 def get_answer_by_id(cursor, id):
     cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
     answer = cursor.fetchone()

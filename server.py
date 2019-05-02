@@ -84,14 +84,12 @@ def route_delete_question(question_id):
     return redirect("/")
 
 
-@app.route("/answer/<answer_id>/delete", methods=['GET', 'POST'])
+@app.route("/answer/<answer_id>/delete")
 def route_delete_answer(answer_id):
-    if request.method == "POST":
-        answer = data_manager.get_record_by_id(answer_id, answer=True)
-        question_id = answer["question_id"]
-        data_manager.delete_by_id('answer', answer_id,)
-        return redirect(url_for("route_question_display", question_id=question_id))
-    return redirect("/")
+    answer = data_manager.get_record_by_id(answer_id, 'answer')
+    question_id = answer["question_id"]
+    data_manager.delete_by_id('answer', answer_id)
+    return redirect(url_for("route_question_display", question_id=question_id))
 
 
 @app.route("/add-question", methods=['GET', 'POST'])
@@ -137,6 +135,18 @@ def route_search_results():
         searched_value = f'%{search_phrase}%'
         data_found = data_manager.get_data_from_database(searched_value)
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
+
+
+@app.route('/comments/<comment_id>/delete')
+def route_delete_comment(comment_id):
+    parent_id = data_manager.get_parent_id_by_comment_id(comment_id)
+    parent_id = parent_id[0]
+    if parent_id['question_id'] == None:
+        question_id = data_manager.get_answer_by_id(parent_id['answer_id'])
+    else:
+        question_id = parent_id['question_id']
+    data_manager.delete_by_id('comment', comment_id)
+    return redirect(f'/question/{question_id}')
 
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
