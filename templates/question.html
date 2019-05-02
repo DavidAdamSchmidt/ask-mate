@@ -39,7 +39,7 @@
                 {% set operations = ('edit', 'delete') if type == 'comment' else ('add', 'edit', 'delete') %}
                 {% for to_do in operations %}
                     {% if to_do == 'add' %}
-                        {% set url = url_for('route_%s_comment_to_answers' % to_do, answer_id=row.id) %}
+                        {% set url = url_for('route_%s_comment_to_answer' % to_do, answer_id=row.id) %}
                     {% elif type == 'question' %}
                         {% set url = url_for('route_%s_question' % to_do, question_id=row.id) %}
                     {% elif type == 'answer' %}
