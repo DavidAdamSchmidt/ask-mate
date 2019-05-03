@@ -145,8 +145,8 @@ def insert_new_tag(cursor, new_tag):
 
 @connection.connection_handler
 def delete_tags(cursor, question_id, tag):
-    tag = None
-    cursor.execute(f"DELETE FROM question_tag WHERE question_id={question_id};")
+    cursor.execute(f"""DELETE FROM question_tag WHERE question_id={question_id};
+            DELETE FROM tag WHERE id={tag};""")
 
 
 @connection.connection_handler
