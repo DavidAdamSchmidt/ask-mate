@@ -39,10 +39,10 @@ def get_record_by_id(cursor, record_id, table):
 
 
 @connection.connection_handler
-def get_record_by_question_id(cursor, question_id, table):
-    cursor.execute(f"SELECT * FROM {table} WHERE question_id={question_id}")
-    answers = cursor.fetchall()
-    return answers
+def get_records_by_parent_id(cursor, id, table, parent_type):
+    cursor.execute(f"SELECT * FROM {table} WHERE {parent_type}_id={id}")
+    records = cursor.fetchall()
+    return records
 
 
 @connection.connection_handler
@@ -50,6 +50,15 @@ def get_answer_by_id(cursor, id):
     cursor.execute(f"SELECT message, image, question_id FROM answer WHERE id={id}")
     answer = cursor.fetchone()
     return answer
+
+
+@connection.connection_handler
+def update_record_by_primary_id(cursor, table, data, id):
+    command = f"UPDATE {table} SET "
+    for key, value in data.items():
+        command += f"{key}="
+        command += (f"'{value}'" if type(value) is str else f"{value}") + ", "
+    cursor.execute(command[:-2] + f" WHERE id={id}")
 
 
 @connection.connection_handler
@@ -108,6 +117,19 @@ def get_search_results_from_database(cursor, search_phrase):
 def delete_by_id(cursor, table, id_):
     cursor.execute(
         f"""DELETE FROM {table} WHERE id={id_};""")
+
+
+@connection.connection_handler
+def delete_by_parent_id(cursor, table, id_, parent_type):
+    cursor.execute(
+        f"""DELETE FROM {table} WHERE {parent_type}_id={id_};""")
+
+
+@connection.connection_handler
+def get_answer_ids(cursor, question_id):
+    cursor.execute(f"SELECT id FROM answer WHERE question_id={question_id}")
+    answer_ids = cursor.fetchall()
+    return answer_ids
 
 
 @connection.connection_handler
