@@ -19,7 +19,7 @@
                             {% set url = url_for('static', filename=value) %}
                             <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
-                    {% elif key == 'submission_time' and type != 'comment' %}
+                    {% elif key == 'submission_time' and type == 'answer' and main_type != 'answer' %}
                         <td>
                             <a href="{{ url_for('route_answer_display', answer_id = row.id) }}">
                                 {{ value }}
