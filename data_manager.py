@@ -104,11 +104,12 @@ def sort_by_any(cursor, table, column, order, limit=None):
 
 @connection.connection_handler
 def get_search_results_from_database(cursor, search_phrase):
-    cursor.execute(f'''
-                   SELECT DISTINCT ON (title) title, question.message FROM question, answer
-                   WHERE title LIKE '%{search_phrase}%' OR question.message LIKE '%{search_phrase}%'
-                   OR answer.message LIKE '%{search_phrase}%' AND question.id=question_id;
-                   ''')
+    cursor.execute('''
+                   SELECT DISTINCT ON (title) title, question.message FROM question
+                   JOIN answer ON question.id = answer.question_id
+                   WHERE title ILIKE %(search_phrase)s OR question.message ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
+                   ''',
+                   {'search_phrase': search_phrase})
     search_results = cursor.fetchall()
     return search_results
 

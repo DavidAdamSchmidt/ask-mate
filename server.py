@@ -171,7 +171,7 @@ def route_search_results():
     if search_phrase == '':
         return redirect('/list')
     else:
-        data_found = data_manager.get_search_results_from_database(search_phrase)
+        data_found = data_manager.get_search_results_from_database(f'%{search_phrase}%')
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
