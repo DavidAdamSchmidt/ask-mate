@@ -108,7 +108,8 @@ def get_search_results_from_database(cursor, search_phrase):
     cursor.execute('''
                    SELECT DISTINCT ON (title) title, question.message FROM question
                    JOIN answer ON question.id = answer.question_id
-                   WHERE title ILIKE %(search_phrase)s OR question.message ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
+                   WHERE title ILIKE %(search_phrase)s OR question.message
+                   ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
                    ''',
                    {'search_phrase': search_phrase})
     search_results = cursor.fetchall()
@@ -166,5 +167,6 @@ def register_user(cursor, name, password):
     cursor.execute("""
                    INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
                    %(name)s, %(password_hash)s, 2, %(registration_date)s);
-    """, {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
+                   """,
+                   {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
                    )
