@@ -1,5 +1,6 @@
 import connection
 from datetime import datetime
+import bcrypt
 
 BASIC_TAGS = ['Python', 'CSS', 'HTML', 'JavaScript', 'Java', 'C#', 'C++', 'C']
 
@@ -107,7 +108,8 @@ def get_search_results_from_database(cursor, search_phrase):
     cursor.execute('''
                    SELECT DISTINCT ON (title) title, question.message FROM question
                    JOIN answer ON question.id = answer.question_id
-                   WHERE title ILIKE %(search_phrase)s OR question.message ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
+                   WHERE title ILIKE %(search_phrase)s OR question.message
+                   ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
                    ''',
                    {'search_phrase': search_phrase})
     search_results = cursor.fetchall()
@@ -155,3 +157,16 @@ def update_tag(cursor, tag):
     cursor.execute(
                    f""" UPDATE tag SET name='{tag['name']}'
         WHERE id={tag['tag_id']};""")
+
+
+@connection.connection_handler
+def register_user(cursor, name, password):
+    hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash = hashed_bytes.decode('utf-8')
+    registration_date = datetime.now()
+    cursor.execute("""
+                   INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
+                   %(name)s, %(password_hash)s, 2, %(registration_date)s);
+                   """,
+                   {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
+                   )

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}Registration page{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Registration</h1><br>
+    <form action="{{ url_for('route_register_user') }}" method="post">
+        <label for="name">Username</label><br><br>
+        <input name="name" id="name"><br><br>
+        <label for="password">Password</label><br><br>
+        <input type="password" name="password" id="password"><br><br>
+        <input type="submit" value="Create user">
+    </form>
+</div>
+{% endblock %}
