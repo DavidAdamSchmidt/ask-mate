@@ -48,7 +48,7 @@ def route_question_display(question_id):
         new_q = request.form.to_dict()
         data_manager.update_question(new_q['title'], new_q['message'], new_q['image'], question_id)
         return redirect('/question/%s' % question_id)
-    template_name = "question.html"
+    template_name = "record_details.html"
     question = data_manager.get_record_by_id(question_id, 'question')
     if question is None:
         return render_template(template_name, question_id=question_id)
@@ -61,14 +61,14 @@ def route_question_display(question_id):
 def route_answer_display(answer_id):
     answer = data_manager.get_record_by_id(answer_id, 'answer')
     comments = data_manager.get_records_by_parent_id(answer_id, 'comment', 'answer')
-    return render_template('question.html', answer=answer, comments=comments)
+    return render_template('record_details.html', answer=answer, comments=comments)
 
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
 def route_edit_question(question_id):
     question = data_manager.get_record_by_id(question_id, 'question')
     if question is None:
-        return render_template('question.html', question_id=question_id)
+        return render_template('record_details.html', question_id=question_id)
     else:
         return render_template('add_question.html', question=question)
 

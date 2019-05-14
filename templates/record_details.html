@@ -5,7 +5,11 @@
         <tr>
         {% for header in table[0] %}
             <th>
-                {{ header.capitalize().replace('_', ' ') }}
+                {% if header == 'user_id' %}
+                    Posted by
+                {% else %}
+                    {{ header.capitalize().replace('_', ' ') }}
+                {% endif %}
             </th>
         {% endfor %}
         </tr>
@@ -67,7 +71,7 @@
         {% endfor %}
         {% if type == 'question' %}
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     {{ tag.name if tag and tag.name else 'No rag added yet' }}
                 </td>
                 <td colspan="3">

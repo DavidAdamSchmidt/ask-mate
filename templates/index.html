@@ -15,7 +15,11 @@
                 {% for key in question_list[0] %}
                     <th>
                         <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
-                            {{ key.capitalize().replace('_', ' ') }}
+                            {% if key == 'user_id' %}
+                                Posted by
+                            {% else %}
+                                {{ key.capitalize().replace('_', ' ') }}
+                            {% endif %}
                         </a>
                     </th>
                 {% endfor %}
