@@ -218,5 +218,14 @@ def route_delete_tag(question_id, tag):
     return redirect(f"/question/{question_id}")
 
 
+@app.route("/registration", methods=['GET', 'POST'])
+def route_register_user():
+    if request.method == 'POST':
+        user_data = request.form.to_dict()
+        data_manager.register_user(user_data['name'], user_data['password'])
+        return redirect(url_for("route_questions_list"))
+    return render_template('registration.html')
+
+
 if __name__ == "__main__":
     app.run(debug=True)
