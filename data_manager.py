@@ -172,6 +172,7 @@ def get_basic_tags(cursor):
         tag_s.append(tag['name'])
     return tag_s
 
+
 @connection.connection_handler
 def check_if_user_exists(cursor, name):
     cursor.execute("""
@@ -181,7 +182,6 @@ def check_if_user_exists(cursor, name):
                    {'name': name})
     user_exists = bool(cursor.fetchone())
     return user_exists
-
 
 
 @connection.connection_handler
@@ -199,3 +199,28 @@ def register_user(cursor, name, password):
                        """,
                        {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
                        )
+
+
+@connection.connection_handler
+def get_user_data(cursor, u_id):
+    cursor.execute("""SELECT name, role, registration_date FROM user_account
+                    JOIN user_role
+                    ON role_id = user_role.id
+                    WHERE user_account.id = %(u_id)s;
+                    """, {"u_id": u_id})
+    user_data = cursor.fetchall()
+    return user_data
+
+
+@connection.connection_handler
+def edit_user_date(cursor, u_name, what_to_do):
+    if what_to_do == "delete":
+        cursor.execute("DELETE FROM user_account WHERE name = %(u_name)s", {"u_name": u_name})
+
+
+@connection.connection_handler
+def get_all_user_data(cursor):
+    cursor.execute("""SELECT name, role, registration_date FROM user_account
+                    JOIN user_role
+                    ON role_id = user_role.id;""")
+    return cursor.fetchall()

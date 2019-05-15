@@ -225,6 +225,24 @@ def route_register_user():
         return redirect(url_for("route_questions_list"))
     return render_template('registration.html')
 
+#user_id is needed instead of integer
+@app.route("/user/", methods=['GET'])
+def route_user_page():
+    user = data_manager.get_user_data(1)[0]
+    return render_template("user_page.html", user=user)
+
+
+@app.route("/edit-user/<name>/<what_to_do>", methods=['GET'])
+def edit_user(name, what_to_do):
+    data_manager.edit_user_date(name, what_to_do)
+    return redirect("/")
+
+
+@app.route("/all-user", methods=['GET'])
+def route_list_all_users():
+    data = data_manager.get_all_user_data()
+    return render_template("user_page.html", data=data)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

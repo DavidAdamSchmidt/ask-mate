@@ -3,6 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a>
     <div>
         <h1>Questions</h1>
         <form action="{{ url_for('route_search_results') }}" method="get">

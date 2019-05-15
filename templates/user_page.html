@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+{% endblock %}
+    {% block content %}
+        {% if data %}
+        <body>
+        <table>
+            <tr>
+                <th><h1>User List</h1></th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item['name'] }}</td><td>{{ item['role'] }}</td><td>{{ item['registration_date'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{{ url_for('route_user_page') }}">Back to my page</a><br>
+        <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
+        </body>
+        {% else %}
+            <h1 id="user_title">{{ user['name'] }}</h1>
+            <body>
+                <div id="u_details">
+                    <p>{{ user['name'] }}</p>
+                    <p>{{ user['role'] }}</p>
+                    <p>{{ user['registration_date'] }}</p>
+                </div>
+                <div id="u_options">
+                    <a href="none">Change Username</a><br>
+                    <a href="none">Change Password</a><br>
+                    <a href="{{ url_for('edit_user', what_to_do = "delete", name = user['name']) }}">Delete User</a><br>
+                </div>
+            <a href="{{ url_for('route_list_all_users') }}" {{ 'hidden' if user['role'] == 'user' else '' }}>List all users and their roles</a><br>
+            <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
+            </body>
+        {% endif %}
+    {% endblock %}
+
