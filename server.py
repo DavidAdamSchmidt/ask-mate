@@ -111,8 +111,12 @@ def route_delete_answer(answer_id):
 @app.route("/add-question", methods=['GET', 'POST'])
 def route_question_add():
     if request.method == 'POST':
-        new_q = request.form.to_dict()
-        data_manager.insert_new_record('question', new_q)
+        if 'name' not in session:
+            return 'You need to log in to ask a question'
+        new_question = request.form.to_dict()
+        user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
+        new_question['user_id'] = user_id_dict['id']
+        data_manager.insert_new_record('question', new_question)
         id_ = data_manager.get_max_id('question')
         id_ = id_['max']
         return redirect('/question/%s' % id_)

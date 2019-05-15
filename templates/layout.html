@@ -6,6 +6,16 @@
     <title>{% block title %}Welcome{% endblock %} | AskMate</title>
 </head>
 <body>
-{% block content %}{% endblock %}
+    <div id="header">
+        <a href="{{ url_for('route_register_user') }}">Register</a>
+        <a href="{% if session %}{{ url_for('logout') }}{% else %}{{ url_for('route_login') }}{% endif %}"
+        >{% if session %}Logout{% else %}Login{% endif %}</a>
+        <p>{% if 'name' in session %}You are logged in as {{ session['name'] }}{% endif %}</p>
+        <form action="{{ url_for('route_search_results') }}" method="get">
+            <input name="search_phrase" id="search_phrase">
+            <input type="submit" id="submit" value="Search">
+        </form>
+    </div>
+    {% block content %}{% endblock %}
 </body>
 </html>

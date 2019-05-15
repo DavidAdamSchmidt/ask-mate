@@ -232,3 +232,10 @@ def register_user(cursor, name, password):
                        """,
                        {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
                        )
+
+
+@connection.connection_handler
+def get_user_id_by_user_name(cursor, name):
+    cursor.execute("SELECT id FROM user_account WHERE name=%(name)s", {'name': name})
+    user_id = cursor.fetchone()
+    return user_id
