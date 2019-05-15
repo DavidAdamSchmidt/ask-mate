@@ -3,8 +3,6 @@ import data_manager
 
 
 app = Flask(__name__)
-
-
 app.secret_key = '\xc1N}\xd3\xf9\x15\xa3\n*7i\xa6'
 
 
@@ -78,12 +76,11 @@ def route_edit_question(question_id):
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def route_add_answer(question_id):
-    default_vote = 0
+    if 'name' not in session:
+        return render_template('warning.html', message='You need to log in to add an answer')
     if request.method == "POST":
-        if 'name' not in session:
-            return 'You need to log in to add an answer'
         new_answer = request.form.to_dict()
-        new_answer["vote_number"] = default_vote
+        new_answer["vote_number"] = 0
         new_answer["question_id"] = question_id
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_answer['user_id'] = user_id_dict['id']
@@ -114,9 +111,9 @@ def route_delete_answer(answer_id):
 
 @app.route("/add-question", methods=['GET', 'POST'])
 def route_question_add():
+    if 'name' not in session:
+        return render_template('warning.html', message='You need to log in to ask a question')
     if request.method == 'POST':
-        if 'name' not in session:
-            return 'You need to log in to ask a question'
         new_question = request.form.to_dict()
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_question['user_id'] = user_id_dict['id']
@@ -124,14 +121,13 @@ def route_question_add():
         id_ = data_manager.get_max_id('question')
         id_ = id_['max']
         return redirect('/question/%s' % id_)
-    else:
-        return render_template('add_question.html')
+    return render_template('add_question.html')
 
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def route_add_comment_to_question(question_id):
     if 'name' not in session:
-        return 'You need to log in to add a comment'
+        return render_template('warning.html', message='You need to log in to add a comment')
     new_comment = request.form.to_dict()
     if new_comment:
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
@@ -144,7 +140,7 @@ def route_add_comment_to_question(question_id):
 @app.route("/answer/<answer_id>/new_comment", methods=['GET', 'POST'])
 def route_add_comment_to_answer(answer_id):
     if 'name' not in session:
-        return 'You need to log in to add a comment'
+        return render_template('warning.html', message='You need to log in to add a comment')
     new_comment = request.form.to_dict()
     if new_comment:
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
@@ -201,7 +197,7 @@ def route_delete_comment(comment_id):
         if comment['question_id'] is not None:
             return redirect(f"/question/{comment['question_id']}")
         return redirect(f"/answer/{comment['answer_id']}")
-    return 'nope'
+    return render_template('warning.html', message='Action denied')
 
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
