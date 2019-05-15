@@ -175,16 +175,16 @@ INSERT INTO comment VALUES (1, 6, 1, NULL, 'Please clarify the question as it is
 INSERT INTO comment VALUES (2, 2, NULL, 1, 'I think you could use my_list = list() as well.', '2017-05-02 16:55:00');
 SELECT pg_catalog.setval('comment_id_seq', 2, true);
 
-INSERT INTO tag VALUES (1, 'python');
-INSERT INTO tag VALUES (2, 'sql');
-INSERT INTO tag VALUES (3, 'css');
-INSERT INTO tag VALUES (4, 'html');
-INSERT INTO tag VALUES (5, 'javascript');
-INSERT INTO tag VALUES (6, 'java');
-INSERT INTO tag VALUES (7, 'c#');
-INSERT INTO tag VALUES (8, 'c++');
-INSERT INTO tag VALUES (9, 'c');
-INSERT INTO tag VALUES (10, 'jquery');
+INSERT INTO tag VALUES (1, 'Python');
+INSERT INTO tag VALUES (2, 'SQL');
+INSERT INTO tag VALUES (3, 'CSS');
+INSERT INTO tag VALUES (4, 'HTML');
+INSERT INTO tag VALUES (5, 'JavaScript');
+INSERT INTO tag VALUES (6, 'Java');
+INSERT INTO tag VALUES (7, 'C#');
+INSERT INTO tag VALUES (8, 'C++');
+INSERT INTO tag VALUES (9, 'C');
+INSERT INTO tag VALUES (10, 'jQuery');
 SELECT pg_catalog.setval('tag_id_seq', 10, true);
 
 INSERT INTO question_tag VALUES (1, 1);
