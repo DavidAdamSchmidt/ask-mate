@@ -80,9 +80,13 @@ def route_edit_question(question_id):
 def route_add_answer(question_id):
     default_vote = 0
     if request.method == "POST":
+        if 'name' not in session:
+            return 'You need to log in to add an answer'
         new_answer = request.form.to_dict()
         new_answer["vote_number"] = default_vote
         new_answer["question_id"] = question_id
+        user_id = data_manager.get_user_id_by_user_name(session['name'])
+        new_answer['user_id'] = user_id['id']
         data_manager.insert_new_record('answer', new_answer)
         return redirect(f"/question/{question_id}")
     return render_template("add_edit.html", parent_id=question_id, parent='question', type='answer')

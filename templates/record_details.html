@@ -113,10 +113,14 @@
         {% endif %}
         {% if question or question_id %}
         <p>
-            {% set id = question.id if question else question_id %}
-            <a href="{{ url_for('route_add_answer', question_id=id) }}">
-                Add new answer
-            </a>
+            {% if 'name' in session %}
+                {% set id = question.id if question else question_id %}
+                <a href="{{ url_for('route_add_answer', question_id=id) }}">
+                    Add new answer
+                </a>
+            {% else %}
+                You need to log in to add an answer
+            {% endif %}
         </p>
         {% endif %}
         {% if comments %}
