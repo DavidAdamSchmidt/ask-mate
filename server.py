@@ -11,21 +11,20 @@ app.secret_key = '\xc1N}\xd3\xf9\x15\xa3\n*7i\xa6'
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
-    data_manager.get_user_names()
-    id_type = request.args.get("order_by")
-    if not id_type:
-        id_type = "submission_time"
+    order_by = request.args.get("order_by")
+    if not order_by:
+        order_by = "submission_time"
     direction_ = request.args.get("order_direction")
     direction_ = True if direction_ == "asc" else False
     limit = 5 if request.path == '/' else None
-    question_list = data_manager.sort_by_any(id_type, direction_, limit)
+    question_list = data_manager.get_sorted_questions(order_by, direction_, limit)
     return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
 @app.route("/question/<question_id>/vote-<operation>", methods=["GET", "POST"])
 def route_question_votes(question_id, operation):
     if request.method == "POST":
-        op_change = "+" if operation == "up" else "-"
+        op_change = "+1" if operation == "up" else "-1"
         data_manager.update_vote_number("question", op_change, question_id)
     return redirect(request.referrer)
 
@@ -33,7 +32,7 @@ def route_question_votes(question_id, operation):
 @app.route("/answer/<answer_id>/vote-<operation>",  methods=["GET", "POST"])
 def route_answer_votes(answer_id, operation):
     if request.method == "POST":
-        op_change = "+" if operation == "up" else "-"
+        op_change = "+1" if operation == "up" else "-1"
         data_manager.update_vote_number("answer", op_change, answer_id)
         answer = data_manager.get_record_by_id("answer", answer_id)
         return redirect(url_for("route_question_display", question_id=answer["question_id"]))
