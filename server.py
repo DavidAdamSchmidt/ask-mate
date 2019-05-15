@@ -226,5 +226,15 @@ def route_register_user():
     return render_template('registration.html', type='registration')
 
 
+@app.route("/login", methods=['GET', 'POST'])
+def route_login():
+    if request.method == 'POST':
+        session = request.form.to_dict()
+        password_hash = hash_password(session['password'])
+
+
+    return render_template('registration.html', type='login')
+
+
 if __name__ == "__main__":
     app.run(debug=True)

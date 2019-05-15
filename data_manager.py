@@ -168,6 +168,14 @@ def get_basic_tags(cursor):
         tag_s.append(tag['name'])
     return tag_s
 
+
+@connection.connection_handler
+def hash_password(password):
+    hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash = hashed_bytes.decode('utf-8')
+    return password_hash
+
+
 @connection.connection_handler
 def check_if_user_exists(cursor, name):
     cursor.execute("""
@@ -186,8 +194,7 @@ def register_user(cursor, name, password):
     if user_exists:
         pass
     else:
-        hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        password_hash = hashed_bytes.decode('utf-8')
+        hash_password(password)
         registration_date = datetime.now()
         cursor.execute("""
                        INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
