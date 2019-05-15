@@ -34,7 +34,7 @@
                     {% endif %}
                 {% endfor %}
                 <td class="no-border">
-                {% if type not in (main_type, 'comment') %}
+                {% if type not in (main_type, 'comment') and 'name' in session %}
                     {% for operation in ('up', 'down') %}
                             {% set url = url_for(
                                 'route_answer_votes',
@@ -46,7 +46,11 @@
                         </form>
                     {% endfor %}
                 {% endif %}
-                {% set operations = ('edit', 'delete') if type == 'comment' else ('add', 'edit', 'delete') %}
+                {% if 'name' in session %}
+                    {% set operations = ('edit', 'delete') if type == 'comment' else ('add', 'edit', 'delete') %}
+                {% else %}
+                    {% set operations = [] %}
+                {% endif %}
                 {% for to_do in operations %}
                     {% if to_do == 'add' %}
                         {% if type == 'question'  %}

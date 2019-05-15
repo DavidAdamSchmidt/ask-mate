@@ -40,19 +40,20 @@
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
+                {% if 'name' in session %}
                     <td class="no-border">
-                {% for operation in ['up', 'down'] %}
-                        {% set url = url_for(
-                            'route_question_votes',
-                            question_id = question.id,
-                            operation = operation
-                        ) %}
-                        <form action="{{ url }}" method="post">
-                            <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
-                        </form>
-
-                {% endfor %}
+                        {% for operation in ['up', 'down'] %}
+                                {% set url = url_for(
+                                    'route_question_votes',
+                                    question_id = question.id,
+                                    operation = operation
+                                ) %}
+                                <form action="{{ url }}" method="post">
+                                    <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
+                                </form>
+                        {% endfor %}
                     </td>
+                {% endif %}
                 </tr>
             {% endfor %}
         </table>

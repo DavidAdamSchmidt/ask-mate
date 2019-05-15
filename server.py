@@ -85,8 +85,8 @@ def route_add_answer(question_id):
         new_answer = request.form.to_dict()
         new_answer["vote_number"] = default_vote
         new_answer["question_id"] = question_id
-        user_id = data_manager.get_user_id_by_user_name(session['name'])
-        new_answer['user_id'] = user_id['id']
+        user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
+        new_answer['user_id'] = user_id_dict['id']
         data_manager.insert_new_record('answer', new_answer)
         return redirect(f"/question/{question_id}")
     return render_template("add_edit.html", parent_id=question_id, parent='question', type='answer')
@@ -130,18 +130,26 @@ def route_question_add():
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def route_add_comment_to_question(question_id):
-    comment = request.form.to_dict()
-    if comment:
-        data_manager.insert_new_record('comment', comment)
+    if 'name' not in session:
+        return 'You need to log in to add a comment'
+    new_comment = request.form.to_dict()
+    if new_comment:
+        user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
+        new_comment['user_id'] = user_id_dict['id']
+        data_manager.insert_new_record('comment', new_comment)
         return redirect(url_for('route_question_display', question_id=question_id))
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
 
 
 @app.route("/answer/<answer_id>/new_comment", methods=['GET', 'POST'])
 def route_add_comment_to_answer(answer_id):
-    comment = request.form.to_dict()
-    if comment:
-        data_manager.insert_new_record("comment", comment)
+    if 'name' not in session:
+        return 'You need to log in to add a comment'
+    new_comment = request.form.to_dict()
+    if new_comment:
+        user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
+        new_comment['user_id'] = user_id_dict['id']
+        data_manager.insert_new_record("comment", new_comment)
         return redirect(url_for("route_answer_display", answer_id=answer_id))
     return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
 
