@@ -1,8 +1,11 @@
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, session
 import data_manager
 
 
 app = Flask(__name__)
+
+
+app.secret_key = '\xc1N}\xd3\xf9\x15\xa3\n*7i\xa6'
 
 
 @app.route("/")
@@ -224,17 +227,26 @@ def route_register_user():
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
         return redirect(url_for("route_questions_list"))
-    return render_template('registration.html')
+    return render_template('registration.html', type='registration')
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def route_login():
     if request.method == 'POST':
-        session = request.form.to_dict()
-        password_hash = hash_password(session['password'])
-
-
+        user_exists = data_manager.check_if_user_exists(request.form['name'])
+        if user_exists:
+            password_hash = data_manager.get_password_hash_by_name(request.form['name'])
+            valid_user_data = data_manager.verify_password(request.form['password'], password_hash)
+            if valid_user_data:
+                session['name'] = request.form['name']
+                return redirect(url_for('route_questions_list'))
     return render_template('registration.html', type='login')
+
+
+@app.route("/logout")
+def logout():
+    session.pop('name', None)
+    return redirect(url_for('route_questions_list'))
 
 
 if __name__ == "__main__":

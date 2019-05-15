@@ -4,6 +4,10 @@
 
 {% block content %}
     <div>
+        <a href="{{ url_for('route_register_user') }}">Register</a>
+        <a href="{% if session %}{{ url_for('logout') }}{% else %}{{ url_for('route_login') }}{% endif %}"
+        >{% if session %}Logout{% else %}Login{% endif %}</a>
+        <p>{% if 'name' in session %}You are logged in as {{ session['name'] }}{% endif %}</p>
         <h1>Questions</h1>
         <form action="{{ url_for('route_search_results') }}" method="get">
             <input name="search_phrase" id="search_phrase">

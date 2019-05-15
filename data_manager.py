@@ -182,11 +182,27 @@ def get_basic_tags(cursor):
     return tag_s
 
 
-@connection.connection_handler
 def hash_password(password):
     hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     password_hash = hashed_bytes.decode('utf-8')
     return password_hash
+
+
+def verify_password(password, password_hash):
+    hashed_bytes_password = password_hash.encode('utf-8')
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_bytes_password)
+
+
+@connection.connection_handler
+def get_password_hash_by_name(cursor, name):
+    cursor.execute("""
+                   SELECT password_hash FROM user_account
+                   WHERE name=%(name)s;
+                   """,
+                   {'name': name})
+    password_hash = cursor.fetchone()['password_hash']
+    return password_hash
+
 
 
 @connection.connection_handler
@@ -207,7 +223,7 @@ def register_user(cursor, name, password):
     if user_exists:
         pass
     else:
-        hash_password(password)
+        password_hash = hash_password(password)
         registration_date = datetime.now()
         cursor.execute("""
                        INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
