@@ -14,16 +14,16 @@ def get_max_id(cursor, table):
 
 @connection.connection_handler
 def update_vote_number(cursor, table, oper, id_):
-    if oper not in "+-":
-        raise ValueError(f"{oper} should be + or -.")
+    if oper not in "+1-1":
+        raise ValueError(f"{oper} should be +1 or -1.")
     cursor.execute((
-        sql.SQL("UPDATE {} SET vote_number = vote_number " + oper + " 1 WHERE id=%(id_)s").
+        sql.SQL("UPDATE {} SET vote_number = vote_number " + oper + " WHERE id=%(id_)s").
         format(sql.Identifier(table))), {"id_": id_})
 
 
 @connection.connection_handler
 def insert_new_record(cursor, table, record):
-    record['submission_time'] = str(datetime.now())
+    record['submission_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     values = ""
     for value in record.values():
         if type(value) is str:
@@ -41,17 +41,6 @@ def get_record_by_id(cursor, table, _id):
                    format(table=sql.Identifier(table)), {"_id": _id})
     record = cursor.fetchone()
     return record
-
-
-@connection.connection_handler
-def get_user_names(cursor):
-    cursor.execute("""SELECT user_account.id, name from user_account 
-                    JOIN question
-                    ON user_id = user_account.id
-                    WHERE user_id = user_account.id
-                    """)
-    name = cursor.fetchall()
-    return name
 
 
 @connection.connection_handler
@@ -94,10 +83,12 @@ def update_question(cursor, title, message, image, id_):
 @connection.connection_handler
 def sort_by_any(cursor, column, order, limit=None):
     order = 'ASC' if order is True else 'DESC'
-    command = """SELECT question.id, submission_time, user_account.name AS Posted_by, view_number, vote_number, title, message, image FROM question
-                JOIN user_account
+    command = f"""SELECT question.id, submission_time, user_account.name 
+                AS Posted_by, view_number, vote_number, title, message, image 
+                FROM question
+                FULL JOIN user_account
                 ON user_id = user_account.id
-                WHERE user_id = user_account.id """
+                WHERE submission_time IS NOT NULL """
 
     if limit is None:
         cursor.execute(command + f"""ORDER BY {column} {order};""")

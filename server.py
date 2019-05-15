@@ -8,7 +8,6 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
-    data_manager.get_user_names()
     id_type = request.args.get("order_by")
     if not id_type:
         id_type = "submission_time"
@@ -22,7 +21,7 @@ def route_questions_list():
 @app.route("/question/<question_id>/vote-<operation>", methods=["GET", "POST"])
 def route_question_votes(question_id, operation):
     if request.method == "POST":
-        op_change = "+" if operation == "up" else "-"
+        op_change = "+1" if operation == "up" else "-1"
         data_manager.update_vote_number("question", op_change, question_id)
     return redirect(request.referrer)
 
@@ -30,7 +29,7 @@ def route_question_votes(question_id, operation):
 @app.route("/answer/<answer_id>/vote-<operation>",  methods=["GET", "POST"])
 def route_answer_votes(answer_id, operation):
     if request.method == "POST":
-        op_change = "+" if operation == "up" else "-"
+        op_change = "+1" if operation == "up" else "-1"
         data_manager.update_vote_number("answer", op_change, answer_id)
         answer = data_manager.get_record_by_id("answer", answer_id)
         return redirect(url_for("route_question_display", question_id=answer["question_id"]))
