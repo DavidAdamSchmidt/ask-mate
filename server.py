@@ -8,6 +8,7 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
+    data_manager.get_user_names()
     id_type = request.args.get("order_by")
     if not id_type:
         id_type = "submission_time"
@@ -53,7 +54,7 @@ def route_question_display(question_id):
     if question is None:
         return render_template(template_name, question_id=question_id)
     answers = data_manager.get_answer_by_question_id(question_id)
-    comments = data_manager.get_comment_by_parent_id("question_id", question_id)
+    comments = data_manager.get_comment_by_parent_id("comment", "question_id", question_id)
     return render_template(template_name, question=question, answers=answers, comments=comments, tag=current_tag)
 
 
