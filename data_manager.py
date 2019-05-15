@@ -17,7 +17,7 @@ def update_vote_number(cursor, table, oper, id_):
     if oper not in "+1-1":
         raise ValueError(f"{oper} should be +1 or -1.")
     cursor.execute((
-        sql.SQL("UPDATE {} SET vote_number = vote_number " + oper + " 1 WHERE id=%(id_)s").
+        sql.SQL("UPDATE {} SET vote_number = vote_number " + oper + " WHERE id=%(id_)s").
         format(sql.Identifier(table))), {"id_": id_})
 
 
