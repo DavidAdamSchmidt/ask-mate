@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% macro display_table(table, type) %}
+{% macro display_table(table, type, main_type) %}
     <table>
         <tr>
         {% for header in table[0] %}
@@ -95,18 +95,19 @@
 
 {% block content %}
     <div>
+        {% set main_type = 'question' if question or question_id else 'answer' %}
         {% if question %}
             <h1>Question #{{ question.id }}</h1>
-            {{ display_table([question], 'question') }}
+            {{ display_table([question], 'question', main_type) }}
         {% elif answer %}
             <h1>Answer #{{ answer.id }}</h1>
-            {{ display_table([answer], 'answer') }}
+            {{ display_table([answer], 'answer', main_type) }}
         {% else %}
             <p>There is no question with id {{ question_id }}</p>
         {% endif %}
         {% if answers %}
             <h2>Answers</h2>
-            {{ display_table(answers, 'answer') }}
+            {{ display_table(answers, 'answer', main_type) }}
         {% elif question or question_id %}
             <p>There are no answers for this question</p>
         {% endif %}
@@ -122,7 +123,7 @@
             <h3>Comments</h3>
             {{ display_table(comments, 'comment') }}
         {% else %}
-            <p>There are no comments for this {{ 'question' if question or question_id else 'answer' }}</p>
+            <p>There are no comments for this {{ main_type }}</p>
         {% endif %}
         <p>
             <a href="{{ url_for('route_questions_list') }}">

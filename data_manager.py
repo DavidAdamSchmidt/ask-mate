@@ -53,7 +53,7 @@ def get_comment_by_parent_id(cursor, parent, id_):
 
 @connection.connection_handler
 def get_answer_by_question_id(cursor, id_):
-    cursor.execute("SELECT * FROM answer WHERE question_id=%(id_)s", {"id_": id_})
+    cursor.execute("SELECT * FROM answer WHERE question_id=%(id_)s ORDER BY vote_number DESC", {"id_": id_})
     records = cursor.fetchall()
     return records
 
@@ -81,23 +81,21 @@ def update_question(cursor, title, message, image, id_):
 
 
 @connection.connection_handler
-def sort_by_any(cursor, column, order, limit=None):
-    order = 'ASC' if order is True else 'DESC'
-    command = f"""SELECT question.id, submission_time, user_account.name 
-                AS Posted_by, view_number, vote_number, title, message, image 
-                FROM question
-                FULL JOIN user_account
-                ON user_id = user_account.id
-                WHERE submission_time IS NOT NULL """
-
-    if limit is None:
-        cursor.execute(command + f"""ORDER BY {column} {order};""")
-    else:
+def get_sorted_questions(cursor, column_to_order_by, asc=True, limit=None):
+    order_direction = 'ASC' if asc is True else 'DESC'
+    command = f"""SELECT question.id, submission_time, user_account.name
+                  AS posted_by, view_number, vote_number, title, message, image
+                  FROM question FULL JOIN user_account ON user_id = user_account.id
+                  WHERE submission_time IS NOT NULL
+                  ORDER BY {column_to_order_by} {order_direction}
+                  """
+    if limit:
         cursor.execute("SELECT COUNT(*) FROM question;")
         row_num = cursor.fetchone()['count']
         if row_num < limit:
             limit = row_num
-        cursor.execute(command + f"""OFFSET {row_num} - {limit} FETCH FIRST {limit} ROWS ONLY;""")
+        command += f" OFFSET {row_num} - {limit} FETCH FIRST {limit} ROWS ONLY"
+    cursor.execute(command)
     ordered_table = cursor.fetchall()
     return ordered_table
 

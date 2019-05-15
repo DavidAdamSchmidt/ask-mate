@@ -8,13 +8,13 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
-    id_type = request.args.get("order_by")
-    if not id_type:
-        id_type = "submission_time"
+    order_by = request.args.get("order_by")
+    if not order_by:
+        order_by = "submission_time"
     direction_ = request.args.get("order_direction")
     direction_ = True if direction_ == "asc" else False
     limit = 5 if request.path == '/' else None
-    question_list = data_manager.sort_by_any(id_type, direction_, limit)
+    question_list = data_manager.get_sorted_questions(order_by, direction_, limit)
     return render_template('index.html', question_list=question_list, current_dir=direction_)
 
 
