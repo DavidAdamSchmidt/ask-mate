@@ -8,6 +8,7 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_questions_list():
+    data_manager.get_user_names()
     id_type = request.args.get("order_by")
     if not id_type:
         id_type = "submission_time"
@@ -223,7 +224,7 @@ def route_register_user():
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
         return redirect(url_for("route_questions_list"))
-    return render_template('registration.html', type='registration')
+    return render_template('registration.html')
 
 
 @app.route("/login", methods=['GET', 'POST'])

@@ -44,6 +44,17 @@ def get_record_by_id(cursor, table, _id):
 
 
 @connection.connection_handler
+def get_user_names(cursor):
+    cursor.execute("""SELECT user_account.id, name from user_account 
+                    JOIN question
+                    ON user_id = user_account.id
+                    WHERE user_id = user_account.id
+                    """)
+    name = cursor.fetchall()
+    return name
+
+
+@connection.connection_handler
 def get_comment_by_parent_id(cursor, parent, id_):
     cursor.execute(sql.SQL("SELECT * FROM comment WHERE {parent} = %(id_)s").
                    format(parent=sql.Identifier(parent)), {"id_": id_})
@@ -83,17 +94,19 @@ def update_question(cursor, title, message, image, id_):
 @connection.connection_handler
 def sort_by_any(cursor, column, order, limit=None):
     order = 'ASC' if order is True else 'DESC'
+    command = """SELECT question.id, submission_time, user_account.name AS Posted_by, view_number, vote_number, title, message, image FROM question
+                JOIN user_account
+                ON user_id = user_account.id
+                WHERE user_id = user_account.id """
+
     if limit is None:
-        cursor.execute(
-            f"""SELECT * FROM question ORDER BY {column} {order};""")
+        cursor.execute(command + f"""ORDER BY {column} {order};""")
     else:
         cursor.execute("SELECT COUNT(*) FROM question;")
         row_num = cursor.fetchone()['count']
         if row_num < limit:
             limit = row_num
-        cursor.execute(
-            f"""SELECT * FROM question ORDER BY {column} {order}
-                OFFSET {row_num} - {limit} FETCH FIRST {limit} ROWS ONLY;""")
+        cursor.execute(command + f"""OFFSET {row_num} - {limit} FETCH FIRST {limit} ROWS ONLY;""")
     ordered_table = cursor.fetchall()
     return ordered_table
 
