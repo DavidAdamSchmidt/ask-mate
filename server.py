@@ -50,17 +50,17 @@ def route_question_display(question_id):
         data_manager.update_question(new_q['title'], new_q['message'], new_q['image'], question_id)
         return redirect('/question/%s' % question_id)
     template_name = "record_details.html"
-    question = data_manager.get_record_by_id("question", question_id)
+    question = data_manager.get_question_with_user_info(question_id)
     if question is None:
         return render_template(template_name, question_id=question_id)
-    answers = data_manager.get_answer_by_question_id(question_id)
+    answers = data_manager.get_answers_by_question_id(question_id)
     comments = data_manager.get_comment_by_parent_id("question_id", question_id)
     return render_template(template_name, question=question, answers=answers, comments=comments, tag=current_tag)
 
 
 @app.route('/answer/<answer_id>')
 def route_answer_display(answer_id):
-    answer = data_manager.get_record_by_id("answer", answer_id)
+    answer = data_manager.get_answer_with_user_info(answer_id)
     comments = data_manager.get_comment_by_parent_id("answer_id", answer_id)
     return render_template('record_details.html', answer=answer, comments=comments)
 
@@ -244,12 +244,14 @@ def route_register_user():
 @app.route("/login", methods=['GET', 'POST'])
 def route_login():
     if request.method == 'POST':
-        user_exists = data_manager.check_if_user_exists(request.form['name'])
-        if user_exists:
+        role_in_dict = data_manager.get_role_id_if_user_exists(request.form['name'])
+        if role_in_dict:
+            role_id = role_in_dict['role_id']
             password_hash = data_manager.get_password_hash_by_name(request.form['name'])
             valid_user_data = data_manager.verify_password(request.form['password'], password_hash)
             if valid_user_data:
                 session['name'] = request.form['name']
+                session['role_id'] = role_id
                 return redirect(url_for('route_questions_list'))
     return render_template('registration.html', type='login')
 
@@ -257,6 +259,7 @@ def route_login():
 @app.route("/logout")
 def logout():
     session.pop('name', None)
+    session.pop('role_id', None)
     return redirect(url_for('route_questions_list'))
 
 

@@ -11,11 +11,7 @@
                 {% for key in question_list[0] %}
                     <th>
                         <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
-                            {% if key == 'user_id' %}
-                                Posted by
-                            {% else %}
-                                {{ key.capitalize().replace('_', ' ') }}
-                            {% endif %}
+                            {{ key.capitalize().replace('_', ' ') }}
                         </a>
                     </th>
                 {% endfor %}
@@ -40,7 +36,7 @@
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
-                {% if 'name' in session %}
+                {% if 'name' in session and (session.name != question.posted_by or session.role_id == 1) %}
                     <td class="no-border">
                         {% for operation in ['up', 'down'] %}
                                 {% set url = url_for(

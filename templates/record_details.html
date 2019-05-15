@@ -5,11 +5,7 @@
         <tr>
         {% for header in table[0] %}
             <th>
-                {% if header == 'user_id' %}
-                    Posted by
-                {% else %}
-                    {{ header.capitalize().replace('_', ' ') }}
-                {% endif %}
+                {{ header.capitalize().replace('_', ' ') }}
             </th>
         {% endfor %}
         </tr>
@@ -34,7 +30,8 @@
                     {% endif %}
                 {% endfor %}
                 <td class="no-border">
-                {% if type not in (main_type, 'comment') and 'name' in session %}
+                {% set can_vote = 'name' in session and session.name != row.posted_by %}
+                {% if type not in (main_type, 'comment') and can_vote %}
                     {% for operation in ('up', 'down') %}
                             {% set url = url_for(
                                 'route_answer_votes',
@@ -47,8 +44,15 @@
                     {% endfor %}
                 {% endif %}
                 {% if 'name' in session %}
-                    {% set operations = ('edit', 'delete') if type == 'comment' else ('add', 'edit', 'delete') %}
-                {% else %}
+                    {% if session.role_id == 1 and type != 'comment' %}
+                        {% set operations = ['add', 'edit', 'delete'] %}
+                    {% elif session.role_id == 1 or session.name == row.posted_by %}
+                        {% set operations = ['edit', 'delete'] %}
+                    {% elif type != 'comment' %}
+                        {% set operations = ['add'] %}
+                    {% endif %}
+                {% endif %}
+                {% if not operations %}
                     {% set operations = [] %}
                 {% endif %}
                 {% for to_do in operations %}
