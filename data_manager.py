@@ -160,13 +160,29 @@ def update_tag(cursor, tag):
 
 
 @connection.connection_handler
-def register_user(cursor, name, password):
-    hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    password_hash = hashed_bytes.decode('utf-8')
-    registration_date = datetime.now()
+def check_if_user_exists(cursor, name):
     cursor.execute("""
-                   INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
-                   %(name)s, %(password_hash)s, 2, %(registration_date)s);
+                   SELECT name FROM user_account
+                   WHERE name LIKE %(name)s;
                    """,
-                   {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
-                   )
+                   {'name': name})
+    user_exists = bool(cursor.fetchone())
+    return user_exists
+
+
+
+@connection.connection_handler
+def register_user(cursor, name, password):
+    user_exists = check_if_user_exists(name)
+    if user_exists:
+        pass
+    else:
+        hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        password_hash = hashed_bytes.decode('utf-8')
+        registration_date = datetime.now()
+        cursor.execute("""
+                       INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
+                       %(name)s, %(password_hash)s, 2, %(registration_date)s);
+                       """,
+                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
+                       )
