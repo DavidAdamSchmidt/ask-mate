@@ -54,7 +54,7 @@ def route_question_display(question_id):
     if question is None:
         return render_template(template_name, question_id=question_id)
     answers = data_manager.get_answer_by_question_id(question_id)
-    comments = data_manager.get_comment_by_parent_id("comment", "question_id", question_id)
+    comments = data_manager.get_comment_by_parent_id("question_id", question_id)
     return render_template(template_name, question=question, answers=answers, comments=comments, tag=current_tag)
 
 
@@ -224,7 +224,7 @@ def route_register_user():
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
         return redirect(url_for("route_questions_list"))
-    return render_template('registration.html', type='registration')
+    return render_template('registration.html')
 
 
 if __name__ == "__main__":
