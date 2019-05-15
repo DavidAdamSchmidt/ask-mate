@@ -224,7 +224,7 @@ def route_register_user():
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
         return redirect(url_for("route_questions_list"))
-    return render_template('registration.html')
+    return render_template('registration.html', type='registration')
 
 
 if __name__ == "__main__":
