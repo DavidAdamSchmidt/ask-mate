@@ -48,7 +48,7 @@ def route_question_display(question_id):
         new_q = request.form.to_dict()
         data_manager.update_question(new_q['title'], new_q['message'], new_q['image'], question_id)
         return redirect('/question/%s' % question_id)
-    template_name = "question.html"
+    template_name = "record_details.html"
     question = data_manager.get_record_by_id("question", question_id)
     if question is None:
         return render_template(template_name, question_id=question_id)
@@ -61,14 +61,14 @@ def route_question_display(question_id):
 def route_answer_display(answer_id):
     answer = data_manager.get_record_by_id("answer", answer_id)
     comments = data_manager.get_comment_by_parent_id("answer_id", answer_id)
-    return render_template('question.html', answer=answer, comments=comments)
+    return render_template('record_details.html', answer=answer, comments=comments)
 
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
 def route_edit_question(question_id):
     question = data_manager.get_record_by_id("question", question_id)
     if question is None:
-        return render_template('question.html', question_id=question_id)
+        return render_template('record_details.html', question_id=question_id)
     else:
         return render_template('add_question.html', question=question)
 
@@ -170,7 +170,7 @@ def route_search_results():
     if search_phrase == '':
         return redirect('/list')
     else:
-        data_found = data_manager.get_search_results_from_database(search_phrase)
+        data_found = data_manager.get_search_results_from_database(f'%{search_phrase}%')
         return render_template('search-results.html', data_found=data_found, search_phrase=search_phrase)
 
 
@@ -187,7 +187,7 @@ def route_delete_comment(comment_id):
 
 @app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
 def route_add_edit_tag(question_id):
-    tags = data_manager.BASIC_TAGS
+    tags = data_manager.get_basic_tags()
     tag_id = data_manager.get_tag_by_question_id(question_id)
     if tag_id == []:
         tag_id = None

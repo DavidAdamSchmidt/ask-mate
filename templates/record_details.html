@@ -1,11 +1,15 @@
 {% extends 'layout.html' %}
 
-{% macro display_table(table, type, main_type) %}
+{% macro display_table(table, type) %}
     <table>
         <tr>
         {% for header in table[0] %}
             <th>
-                {{ header.capitalize().replace('_', ' ') }}
+                {% if header == 'user_id' %}
+                    Posted by
+                {% else %}
+                    {{ header.capitalize().replace('_', ' ') }}
+                {% endif %}
             </th>
         {% endfor %}
         </tr>
@@ -19,7 +23,7 @@
                             {% set url = url_for('static', filename=value) %}
                             <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
-                    {% elif key == 'submission_time' and type != 'comment' %}
+                    {% elif key == 'submission_time' and type == 'answer' and 'answer' not in request.path %}
                         <td>
                             <a href="{{ url_for('route_answer_display', answer_id = row.id) }}">
                                 {{ value }}
@@ -67,7 +71,7 @@
         {% endfor %}
         {% if type == 'question' %}
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     {{ tag.name if tag and tag.name else 'No rag added yet' }}
                 </td>
                 <td colspan="3">
@@ -90,24 +94,23 @@
 {% endblock %}
 
 {% block content %}
-    {%  set main_type = 'question' if 'question' in request.path else 'answer' %}
     <div>
         {% if question %}
             <h1>Question #{{ question.id }}</h1>
-            {{ display_table([question], 'question', main_type) }}
+            {{ display_table([question], 'question') }}
         {% elif answer %}
             <h1>Answer #{{ answer.id }}</h1>
-            {{ display_table([answer], 'answer', main_type) }}
+            {{ display_table([answer], 'answer') }}
         {% else %}
             <p>There is no question with id {{ question_id }}</p>
         {% endif %}
         {% if answers %}
             <h2>Answers</h2>
-            {{ display_table(answers, 'answer', main_type) }}
-        {% elif main_type == 'question' %}
+            {{ display_table(answers, 'answer') }}
+        {% elif question or question_id %}
             <p>There are no answers for this question</p>
         {% endif %}
-        {% if main_type == 'question' %}
+        {% if question or question_id %}
         <p>
             {% set id = question.id if question else question_id %}
             <a href="{{ url_for('route_add_answer', question_id=id) }}">
@@ -117,9 +120,9 @@
         {% endif %}
         {% if comments %}
             <h3>Comments</h3>
-            {{ display_table(comments, 'comment', main_type) }}
+            {{ display_table(comments, 'comment') }}
         {% else %}
-            <p>There are no comments for this {{ main_type }}</p>
+            <p>There are no comments for this {{ 'question' if question or question_id else 'answer' }}</p>
         {% endif %}
         <p>
             <a href="{{ url_for('route_questions_list') }}">
