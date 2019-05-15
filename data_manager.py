@@ -1,6 +1,7 @@
 import connection
 from datetime import datetime
 from psycopg2 import sql
+import bcrypt
 
 
 @connection.connection_handler
@@ -102,7 +103,8 @@ def get_search_results_from_database(cursor, search_phrase):
     cursor.execute('''
                    SELECT DISTINCT ON (title) title, question.message FROM question
                    JOIN answer ON question.id = answer.question_id
-                   WHERE title ILIKE %(search_phrase)s OR question.message ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
+                   WHERE title ILIKE %(search_phrase)s OR question.message
+                   ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
                    ''',
                    {'search_phrase': search_phrase})
     search_results = cursor.fetchall()
@@ -165,3 +167,31 @@ def get_basic_tags(cursor):
     for tag in basic_tags:
         tag_s.append(tag['name'])
     return tag_s
+
+@connection.connection_handler
+def check_if_user_exists(cursor, name):
+    cursor.execute("""
+                   SELECT name FROM user_account
+                   WHERE name LIKE %(name)s;
+                   """,
+                   {'name': name})
+    user_exists = bool(cursor.fetchone())
+    return user_exists
+
+
+
+@connection.connection_handler
+def register_user(cursor, name, password):
+    user_exists = check_if_user_exists(name)
+    if user_exists:
+        pass
+    else:
+        hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        password_hash = hashed_bytes.decode('utf-8')
+        registration_date = datetime.now()
+        cursor.execute("""
+                       INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
+                       %(name)s, %(password_hash)s, 2, %(registration_date)s);
+                       """,
+                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
+                       )
