@@ -49,7 +49,7 @@ def route_question_display(question_id):
     else:
         tag = tag[0]['tag_id']
         current_tag = data_manager.get_record_by_id("tag", tag)
-    template_name = "record_details.html"
+    template_name = "record-details.html"
     question = data_manager.get_question_with_user_info(question_id)
     if question is None:
         return render_template(template_name, question_id=question_id)
@@ -62,7 +62,7 @@ def route_question_display(question_id):
 def route_answer_display(answer_id):
     answer = data_manager.get_answer_with_user_info(answer_id)
     comments = data_manager.get_comment_by_parent_id('answer_id', answer_id)
-    return render_template('record_details.html', answer=answer, comments=comments)
+    return render_template('record-details.html', answer=answer, comments=comments)
 
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
@@ -72,7 +72,7 @@ def route_edit_question(question_id):
         data_manager.update_question(question_id, **edited_question)
         return redirect(url_for('route_question_display', question_id=question_id))
     question = data_manager.get_record_by_id("question", question_id)
-    return render_template('add_edit.html', data=question, type='question', id=question_id)
+    return render_template('add-edit.html', data=question, type='question', id=question_id)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -89,7 +89,7 @@ def route_add_answer(question_id):
             del new_answer['image']
         data_manager.insert_new_record('answer', new_answer)
         return redirect(f'/question/{question_id}')
-    return render_template('add_edit.html', parent_id=question_id, parent='question', type='answer')
+    return render_template('add-edit.html', parent_id=question_id, parent='question', type='answer')
 
 
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
@@ -122,7 +122,7 @@ def route_question_add():
         id_ = data_manager.get_max_id('question')
         id_ = id_['max']
         return redirect('/question/%s' % id_)
-    return render_template('add_edit.html', type='question')
+    return render_template('add-edit.html', type='question')
 
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
@@ -135,7 +135,7 @@ def route_add_comment_to_question(question_id):
         new_comment['user_id'] = user_id_dict['id']
         data_manager.insert_new_record('comment', new_comment)
         return redirect(url_for('route_question_display', question_id=question_id))
-    return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
+    return render_template('add-edit.html', parent_id=question_id, parent='question', type='comment')
 
 
 @app.route('/answer/<answer_id>/new_comment', methods=['GET', 'POST'])
@@ -148,7 +148,7 @@ def route_add_comment_to_answer(answer_id):
         new_comment['user_id'] = user_id_dict['id']
         data_manager.insert_new_record('comment', new_comment)
         return redirect(url_for('route_answer_display', answer_id=answer_id))
-    return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
+    return render_template('add-edit.html', parent_id=answer_id, parent='answer', type='comment')
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
@@ -160,7 +160,7 @@ def route_edit_answer(answer_id):
         data_manager.update_answer(message, image, answer_id)
         return redirect(url_for('route_question_display', question_id=question_id))
     answer = data_manager.get_record_by_id('answer', answer_id)
-    return render_template('add_edit.html', data=answer, id=answer_id, type='answer')
+    return render_template('add-edit.html', data=answer, id=answer_id, type='answer')
 
 
 @app.route('/comments/<comment_id>/edit', methods=['POST', 'GET'])
@@ -177,7 +177,7 @@ def route_edit_comment(comment_id):
         parent_id = request.form.get('answer_id')
         return redirect(url_for('route_answer_display', answer_id=parent_id))
     comment = data_manager.get_record_by_id('comment', comment_id)
-    return render_template('add_edit.html', data=comment, id=comment_id, type='comment')
+    return render_template('add-edit.html', data=comment, id=comment_id, type='comment')
 
 
 @app.route('/search')
@@ -224,7 +224,7 @@ def route_add_edit_tag(question_id):
         else:
             data_manager.update_tag(ntag)
         return redirect(f'/question/{question_id}')
-    return render_template('add_edit_tag.html', question_id=question_id, tags=tags, tag_id=tag_id)
+    return render_template('add-edit-tag.html', question_id=question_id, tags=tags, tag_id=tag_id)
 
 
 @app.route('/question/<question_id>/<tag>/delete')
@@ -278,7 +278,7 @@ def route_user_page(name):
             reputation['answer_votes'] = 0
         if reputation['question_votes'] is None:
             reputation['question_votes'] = 0
-    return render_template('user_page.html', user=user, reputation=reputation)
+    return render_template('user-page.html', user=user, reputation=reputation)
 
 
 @app.route('/edit-user/<name>/<what_to_do>', methods=['GET'])
@@ -298,14 +298,14 @@ def route_list_all_users():
         message = "You don't have the right to view this page"
         return render_template('warning.html', message=message)
     data = data_manager.get_all_user_data()
-    return render_template('user_page.html', data=data)
+    return render_template('user-page.html', data=data)
 
 
 @app.route('/all-tags', methods=['GET'])
 def route_list_all_tags():
     tags = data_manager.get_all_tags_questions()
     unique_tags = set(tag['tag'] for tag in tags)
-    return render_template('user_page.html', tags=tags, unique_tags=unique_tags)
+    return render_template('user-page.html', tags=tags, unique_tags=unique_tags)
 
 
 if __name__ == '__main__':
