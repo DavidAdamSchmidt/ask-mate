@@ -12,11 +12,21 @@
             <input type="submit" value="Search">
         </form>
         {% if 'name' in session %}
-            <span class="login">You are logged in as {{ session.name }}
-            <a href="{{ url_for('logout') }}">Logout</a></span>
+            <span class="login">You are logged in as
+                <a href="{{ url_for('route_user_page') }}">{{ session.name }}</a>
+                <a class="login" href="{{ url_for('logout') }}">
+                    <button>Logout</button>
+                </a>
+            </span>
         {% else %}
-            <span class="login"><a href="{{ url_for('route_login') }}">Login</a>
-            <a href="{{ url_for('route_register_user') }}">Register</a></span>
+            <span>
+                <a class="login" href="{{ url_for('route_login') }}">
+                    <button>Login</button>
+                </a>
+                <a class="login" href="{{ url_for('route_register_user') }}">
+                    <button>Register</button>
+                </a>
+            </span>
         {% endif %}
     </div>
     {% block content %}{% endblock %}

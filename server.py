@@ -269,7 +269,7 @@ def logout():
     return redirect(url_for('route_all_questions_list'))
 
 
-#user_id is needed instead of integer
+# user_id is needed instead of integer
 @app.route('/user/', methods=['GET'])
 def route_user_page():
     if 'name' in session:
@@ -301,11 +301,8 @@ def route_list_all_users():
 
 @app.route('/all-tags', methods=['GET'])
 def route_list_all_tags():
-    unique_tags= []
     tags = data_manager.get_all_tags_questions()
-    for tag in tags:
-        unique_tags.append(tag['tag'])
-    unique_tags = set(unique_tags)
+    unique_tags = set(tag['tag'] for tag in tags)
     return render_template('user_page.html', tags=tags, unique_tags=unique_tags)
 
 

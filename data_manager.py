@@ -335,7 +335,6 @@ def get_user_data(cursor, user_name):
 
 @connection.connection_handler
 def edit_user_data(cursor, u_name, what_to_do):
-    print(u_name, what_to_do)
     if what_to_do == "delete":
         cursor.execute("DELETE FROM user_account WHERE name = %(u_name)s", {"u_name": u_name})
 
@@ -359,7 +358,8 @@ def get_user_reputation(cursor, u_id):
                 ON answer.user_id = question.user_id
                 FULL JOIN user_account
                 ON question.user_id = user_account.id
-                WHERE user_account.id = %(u_id)s AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
+                WHERE user_account.id = %(u_id)s
+                AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
                 """, {"u_id": u_id})
     return cursor.fetchone()
 

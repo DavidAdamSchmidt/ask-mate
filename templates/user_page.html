@@ -1,60 +1,84 @@
 {% extends 'layout.html' %}
 
 {% block title %}
+    Tags
 {% endblock %}
-    {% block content %}
+
+{% block content %}
+    <div>
         {% if data %}
-        <body>
-        <table>
-            <tr>
-                <th><h1>User List</h1></th>
-            </tr>
-            {% for item in data %}
-            <tr>
-                <td>{{ item['name'] }}</td><td>{{ item['role'] }}</td><td>{{ item['registration_date'] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <a href="{{ url_for('route_user_page') }}">Back to my page</a><br>
-        <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
-        </body>
-        {% elif user %}
-            <h1 id="user_title">{{ user['name'] }}</h1>
-            <body>
-                <div id="u_details">
-                    <p>{{ session['name'] }}</p>
-                    <p>{{ user['role'] }}</p>
-                    <p>{{ user['registration_date'] }}</p>
-                    <p {{ 'hidden' if user['role'] == 'admin' else '' }}>
-                        {% if reputation == None %}
-                            You have not earned shit.
-                        {% else %}
-                            Reputation: {{ reputation['answer_votes'] + reputation['question_votes'] }}
-                        {% endif %}
-                    </p>
-                </div>
-                <div id="u_options">
-                    <a href="none">Change Username</a><br>
-                    <a href="none">Change Password</a><br>
-                    <a href="{{ url_for('edit_user', name = session['name'], what_to_do = "delete") }}">Delete User</a><br>
-                </div>
-            <a href="{{ url_for('route_list_all_users') }}" {{ 'hidden' if user['role'] == 'user' else '' }}>List all users and their roles</a><br>
-            <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
-            </body>
-        {% elif tags %}
-            <body>
-            {% for unique in unique_tags %}
-                <tr><th>{{ unique }}</th><br></tr>
-                {% for tag in tags %}
-                    {% if tag['tag'] == unique %}
-                        {% if tag['question_id'] != None %}
-                            <tr><td><a href="{{ url_for('route_question_display', question_id = tag['question_id']) }}">
-                                {{ tag['question_title'] }}</a></td><br></tr>
-                        {% endif %}
-                    {% endif %}
+            <table>
+                <tr>
+                    <th>User name</th>
+                    <th>User role</th>
+                    <th>Registration date</th>
+                </tr>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item['name'] }}</td>
+                    <td>{{ item['role'] }}</td>
+                    <td>{{ item['registration_date'] }}</td>
+                </tr>
                 {% endfor %}
-            {% endfor %}
-            </body>
+            </table>
+        {% elif user %}
+            <h1 id="user_title">User page of {{ session.name }}</h1>
+            <table>
+                <tr>
+                    <th>User name</th>
+                    <th>User role</th>
+                    <th>Registration date</th>
+                    {% if user.role == 'user' %}
+                        <th>Reputation</th>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td>{{ session.name }}</td>
+                    <td>{{ user.role.capitalize() }}</td>
+                    <td>{{ user.registration_date }}</td>
+                    {% if user.role == 'user' %}
+                        <td>
+                            {% if reputation == None %}
+                                You have not earned shit
+                            {% else %}
+                                Reputation: {{ reputation['answer_votes'] + reputation['question_votes'] }}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+            <p>
+                <a href="{{ url_for('edit_user', name=session.name, what_to_do='delete') }}">Delete User</a>
+            </p>
+        {% elif tags %}
+            <table>
+                {% for unique in unique_tags %}
+                    <tr>
+                        <th>{{ unique }}</th>
+                    </tr>
+                    {% for tag in tags %}
+                        {% if tag['tag'] == unique %}
+                            {% if tag['question_id'] != None %}
+                                <tr>
+                                    <td>
+                                        {% set url = url_for(
+                                            'route_question_display',
+                                            question_id = tag['question_id']
+                                            ) %}
+                                        <a href="{{ url }}">
+                                            {{ tag['question_title'] }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </table>
         {% endif %}
-    {% endblock %}
+        <p>
+            {% include 'footer.html' %}
+        </p>
+    </div>
+{% endblock %}
 
