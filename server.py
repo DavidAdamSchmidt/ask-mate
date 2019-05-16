@@ -94,12 +94,6 @@ def route_add_answer(question_id):
 
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def route_delete_question(question_id):
-    answer_ids = data_manager.get_answer_ids(question_id)
-    for answer_id in answer_ids:
-        data_manager.delete_by_id('comment', answer_id['id'], 'answer_id')
-    data_manager.delete_by_id('answer', question_id, 'question_id')
-    data_manager.delete_by_id('question_tag', question_id, 'question_id')
-    data_manager.delete_by_id('comment', question_id, 'question_id')
     data_manager.delete_by_id('question', question_id)
     return redirect('/')
 
@@ -246,7 +240,7 @@ def route_register_user():
         success = data_manager.register_user(user_data['name'], user_data['password'])
         if success:
             return redirect(url_for('route_all_questions_list'))
-        msg = 'User already exists!'
+        msg = 'Username already taken'
         return render_template('registration.html', type='registration', warning_message=msg)
     return render_template('registration.html', type='registration')
 
@@ -262,6 +256,8 @@ def route_login():
                 session['name'] = request.form['name']
                 session['role_id'] = role_id
                 return redirect(url_for('route_all_questions_list'))
+        msg = 'Invalid password or username'
+        return render_template('registration.html', type='login', warning_message=msg)
     return render_template('registration.html', type='login')
 
 

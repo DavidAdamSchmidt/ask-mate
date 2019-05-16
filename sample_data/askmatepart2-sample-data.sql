@@ -145,12 +145,12 @@ INSERT INTO user_role VALUES (1, 'admin');
 INSERT INTO user_role VALUES (2, 'user');
 SELECT pg_catalog.setval('user_role_id_seq', 2, true);
 
-INSERT INTO user_account VALUES (1, 'Godmin', '$2b$12$brBXWIaNLmvWMGXtXAtx6.Pfk.aA7YuU3C3WFVtZ4UOaRv5WsoSnG', 1, '2014-03-25 17:49:00');
-INSERT INTO user_account VALUES (2, 'george2000', '$2b$12$E2PoOy8Mr29wSi6bCYac5emal5Jy4zzSNlWGn/HApiWBPsb1opG3.', 2, '2014-03-26 11:33:00');
-INSERT INTO user_account VALUES (3, 'codecooler', '$2b$12$jPBG45921ECqAUhSSn.29.43orOytQ7O/DgsrlA.7T5r4LK5YblmG', 2, '2014-03-28 19:02:00');
-INSERT INTO user_account VALUES (4, 'randomguy', '$2b$12$3zE1mU3BrlC8fkd11a2Rbu.pp.HU7RrBZ4hHt94lJt3/37VxGzsgu', 2, '2014-03-28 19:48:00');
-INSERT INTO user_account VALUES (5, 'pythonpro', '$2b$12$sZC6lS8beSsUUJHc.KbW3uQpAwuglGdoO.f0ChL6rvP3kFxIrpkWq', 2, '2014-03-28 21:27:00');
-INSERT INTO user_account VALUES (6, 'gotfan', '$2b$12$zmh6ghwMSScDAiSuKMhxTuNlMdDWjumo1gelgQHpJ2w1EtBkZcQwa', 2, '2014-03-29 03:05:00');
+INSERT INTO user_account VALUES (1, 'Godmin', '$2b$12$brBXWIaNLmvWMGXtXAtx6.Pfk.aA7YuU3C3WFVtZ4UOaRv5WsoSnG', 1, '2017-03-25 17:49:00');
+INSERT INTO user_account VALUES (2, 'george2000', '$2b$12$E2PoOy8Mr29wSi6bCYac5emal5Jy4zzSNlWGn/HApiWBPsb1opG3.', 2, '2017-03-26 11:33:00');
+INSERT INTO user_account VALUES (3, 'iam_the_one', '$2b$12$jPBG45921ECqAUhSSn.29.43orOytQ7O/DgsrlA.7T5r4LK5YblmG', 2, '2017-03-28 19:02:00');
+INSERT INTO user_account VALUES (4, 'randomguy', '$2b$12$3zE1mU3BrlC8fkd11a2Rbu.pp.HU7RrBZ4hHt94lJt3/37VxGzsgu', 2, '2017-03-28 19:48:00');
+INSERT INTO user_account VALUES (5, 'pythonpro', '$2b$12$sZC6lS8beSsUUJHc.KbW3uQpAwuglGdoO.f0ChL6rvP3kFxIrpkWq', 2, '2017-03-28 21:27:00');
+INSERT INTO user_account VALUES (6, 'gotsucks', '$2b$12$zmh6ghwMSScDAiSuKMhxTuNlMdDWjumo1gelgQHpJ2w1EtBkZcQwa', 2, '2017-03-29 03:05:00');
 SELECT pg_catalog.setval('user_account_id_seq', 6, true);
 
 INSERT INTO question VALUES (1, 4, '2017-04-28 08:29:00', 29, 7, 'How to make lists in Python?', 'I am totally new to this, any hints?', NULL);

@@ -18,6 +18,10 @@ tr:nth-child(even) {
     background-color: bisque;
 }
 
+tr.tagged-question {
+    background-color: bisque;
+}
+
 th {
     background-color: burlywood;
     border: 3px solid black;
@@ -73,27 +77,27 @@ a:hover, a:visited, a:link, a:active {
 }
 
 .edit {
-    background-color: orange;
-}
-
-.edit:hover {
     background-color: #ffc500
 }
 
-.delete {
-    background-color: indigo;
+.edit:hover {
+    background-color: orange;
 }
 
-.delete:hover {
+.delete {
     background-color: #6a5acd;
 }
 
+.delete:hover {
+    background-color: indigo;
+}
+
 .add {
-    background-color: dodgerblue;
+    background-color: #6e90ff;
 }
 
 .add:hover {
-    background-color: #6e90ff;
+    background-color: dodgerblue;
 }
 
 input[type=submit].active {
