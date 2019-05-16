@@ -225,6 +225,7 @@ def route_register_user():
         return redirect(url_for("route_questions_list"))
     return render_template('registration.html')
 
+
 #user_id is needed instead of integer
 @app.route("/user/", methods=['GET'])
 def route_user_page():
