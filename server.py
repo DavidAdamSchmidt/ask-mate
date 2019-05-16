@@ -228,8 +228,13 @@ def route_register_user():
 #user_id is needed instead of integer
 @app.route("/user/", methods=['GET'])
 def route_user_page():
-    user = data_manager.get_user_data(1)[0]
-    return render_template("user_page.html", user=user)
+    user = data_manager.get_user_data(2)[0]
+    reputation = data_manager.get_user_reputation(2)[0]
+    if reputation['answer_votes'] is None:
+        reputation['answer_votes'] = 0
+    if reputation['question_votes'] is None:
+        reputation['question_votes'] = 0
+    return render_template("user_page.html", user=user, reputation=reputation)
 
 
 @app.route("/edit-user/<name>/<what_to_do>", methods=['GET'])

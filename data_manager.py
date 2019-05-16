@@ -222,3 +222,19 @@ def get_all_user_data(cursor):
                     JOIN user_role
                     ON role_id = user_role.id;""")
     return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_reputation(cursor, u_id):
+    cursor.execute("""
+                SELECT (answer.vote_number * 10) AS answer_votes,
+                       (question.vote_number * 5) AS question_votes,
+                       user_account.name AS user_name,
+                       user_account.id AS user_id FROM question
+                FULL JOIN answer
+                ON answer.user_id = question.user_id
+                FULL JOIN user_account
+                ON question.user_id = user_account.id
+                WHERE user_account.id = %(u_id)s AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
+                """, {"u_id": u_id})
+    return cursor.fetchall()
