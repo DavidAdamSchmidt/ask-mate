@@ -3,6 +3,10 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    {% if 'name' in session %}
+    <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a><br>
+    {% endif %}
+    <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a><br>
     <div>
         <h1>Questions</h1>
         <table>

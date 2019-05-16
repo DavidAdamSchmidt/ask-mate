@@ -303,7 +303,64 @@ def register_user(cursor, name, password):
                        INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
                        %(name)s, %(password_hash)s, 2, %(registration_date)s);
                        """,
-                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date})
+                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
+                       )
+
+
+@connection.connection_handler
+def get_user_data(cursor, user_name):
+    cursor.execute("""SELECT user_account.id AS user_id, role, registration_date FROM user_account
+                    JOIN user_role
+                    ON role_id = user_role.id
+                    WHERE name = %(user_name)s;
+                    """, {"user_name": user_name})
+    user_data = cursor.fetchall()
+    return user_data
+
+
+@connection.connection_handler
+def edit_user_data(cursor, u_name, what_to_do):
+    print(u_name, what_to_do)
+    if what_to_do == "delete":
+        cursor.execute("DELETE FROM user_account WHERE name = %(u_name)s", {"u_name": u_name})
+
+
+@connection.connection_handler
+def get_all_user_data(cursor):
+    cursor.execute("""SELECT name, role, registration_date FROM user_account
+                    JOIN user_role
+                    ON role_id = user_role.id;""")
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_reputation(cursor, u_id):
+    cursor.execute("""
+                SELECT (answer.vote_number * 10) AS answer_votes,
+                       (question.vote_number * 5) AS question_votes,
+                       user_account.name AS user_name,
+                       user_account.id AS user_id FROM question
+                FULL JOIN answer
+                ON answer.user_id = question.user_id
+                FULL JOIN user_account
+                ON question.user_id = user_account.id
+                WHERE user_account.id = %(u_id)s AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
+                """, {"u_id": u_id})
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_all_tags_questions(cursor):
+    cursor.execute("""
+                SELECT question.id AS question_id, title as question_title, name AS tag FROM question
+                JOIN question_tag
+                ON question.id = question_tag.question_id
+                FULL JOIN tag
+                ON tag_id = tag.id
+                ORDER BY name DESC;
+                """)
+    return cursor.fetchall()
+
 
 
 @connection.connection_handler

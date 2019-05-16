@@ -149,3 +149,22 @@ img:hover {
     top: 2em;
     right: 15em;
 }
+#user_title {
+    display: block;
+    alignment: center;
+}
+#u_details , #u_options {
+    display: inline-block;
+    align-content: center;
+    margin: 200px;
+    position: relative;
+
+}
+
+#u_details {
+
+}
+
+#u_options {
+
+}
