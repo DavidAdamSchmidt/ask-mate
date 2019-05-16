@@ -263,7 +263,7 @@ def logout():
 
 
 #user_id is needed instead of integer
-@app.route("/user/", methods=['GET'])
+@app.route('/user/', methods=['GET'])
 def route_user_page():
     if 'name' in session:
         user_name = session['name']
@@ -277,30 +277,30 @@ def route_user_page():
             reputation['answer_votes'] = 0
         if reputation['question_votes'] is None:
             reputation['question_votes'] = 0
-    return render_template("user_page.html", user=user, reputation=reputation)
+    return render_template('user_page.html', user=user, reputation=reputation)
 
 
-@app.route("/edit-user/<name>/<what_to_do>", methods=['GET'])
+@app.route('/edit-user/<name>/<what_to_do>', methods=['GET'])
 def edit_user(name, what_to_do):
     data_manager.edit_user_data(name, what_to_do)
     return logout()
 
 
-@app.route("/all-user", methods=["GET"])
+@app.route('/all-user', methods=['GET'])
 def route_list_all_users():
     data = data_manager.get_all_user_data()
-    return render_template("user_page.html", data=data)
+    return render_template('user_page.html', data=data)
 
 
-@app.route("/all-tags", methods=["GET"])
+@app.route('/all-tags', methods=['GET'])
 def route_list_all_tags():
     unique_tags= []
     tags = data_manager.get_all_tags_questions()
     for tag in tags:
         unique_tags.append(tag['tag'])
     unique_tags = set(unique_tags)
-    return render_template("user_page.html", tags=tags, unique_tags=unique_tags)
+    return render_template('user_page.html', tags=tags, unique_tags=unique_tags)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
