@@ -180,7 +180,7 @@ def get_most_recent_questions(cursor, amount):
 def get_search_results_from_database(cursor, search_phrase):
     cursor.execute("""
                    SELECT DISTINCT ON (title) title, question.message FROM question
-                   JOIN answer ON question.id = answer.question_id
+                   LEFT JOIN answer ON question.id = answer.question_id
                    WHERE title ILIKE %(search_phrase)s OR question.message
                    ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;
                    """,
