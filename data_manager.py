@@ -44,16 +44,56 @@ def get_record_by_id(cursor, table, _id):
 
 
 @connection.connection_handler
-def get_comment_by_parent_id(cursor, parent, id_):
-    cursor.execute(sql.SQL("SELECT * FROM comment WHERE {parent} = %(id_)s").
-                   format(parent=sql.Identifier(parent)), {"id_": id_})
+def get_question_with_user_info(cursor, question_id):
+    cursor.execute("""
+                   SELECT question.id, user_account.name AS posted_by,
+                   question.submission_time, question.view_number, question.vote_number,
+                   question.title, question.message, question.image
+                   FROM question JOIN user_account ON question.user_id = user_account.id
+                   WHERE question.id = %(question_id)s
+                   """,
+                   {"question_id": question_id})
+    record = cursor.fetchone()
+    return record
+
+
+@connection.connection_handler
+def get_answer_with_user_info(cursor, answer_id):
+    cursor.execute("""
+                   SELECT answer.id, user_account.name AS posted_by,
+                   answer.submission_time, answer.vote_number, answer.question_id,
+                   answer.message, answer.image
+                   FROM answer JOIN user_account ON answer.user_id = user_account.id
+                   WHERE answer.id = %(answer_id)s
+                   """,
+                   {"answer_id": answer_id})
+    record = cursor.fetchone()
+    return record
+
+
+@connection.connection_handler
+def get_comment_by_parent_id(cursor, parent_type, parent_id):
+    cursor.execute(sql.SQL("""
+                           SELECT comment.id, user_account.name AS posted_by,
+                           comment.question_id, comment.answer_id,
+                           comment.message, comment.submission_time, comment.edited_count
+                           FROM comment JOIN user_account ON comment.user_id = user_account.id
+                           WHERE {parent_type} = %(parent_id)s
+                           """).format(parent_type=sql.Identifier(parent_type)), {"parent_id": parent_id})
     records = cursor.fetchall()
     return records
 
 
 @connection.connection_handler
-def get_answer_by_question_id(cursor, id_):
-    cursor.execute("SELECT * FROM answer WHERE question_id=%(id_)s ORDER BY vote_number DESC", {"id_": id_})
+def get_answers_by_question_id(cursor, question_id):
+    cursor.execute("""
+                   SELECT answer.id, user_account.name AS posted_by,
+                   answer.submission_time, answer.vote_number, answer.question_id,
+                   answer.message, answer.image
+                   FROM answer JOIN user_account ON answer.user_id = user_account.id
+                   WHERE question_id=%(question_id)s ORDER BY vote_number DESC
+                   """,
+                   {"question_id": question_id})
     records = cursor.fetchall()
     return records
 
@@ -171,21 +211,43 @@ def get_basic_tags(cursor):
     return tag_s
 
 
+def hash_password(password):
+    hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash = hashed_bytes.decode('utf-8')
+    return password_hash
+
+
+def verify_password(password, password_hash):
+    hashed_bytes_password = password_hash.encode('utf-8')
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_bytes_password)
+
+
 @connection.connection_handler
-def check_if_user_exists(cursor, name):
+def get_password_hash_by_name(cursor, name):
     cursor.execute("""
-                   SELECT name FROM user_account
+                   SELECT password_hash FROM user_account
+                   WHERE name=%(name)s;
+                   """,
+                   {'name': name})
+    password_hash = cursor.fetchone()['password_hash']
+    return password_hash
+
+
+@connection.connection_handler
+def get_role_id_if_user_exists(cursor, name):
+    cursor.execute("""
+                   SELECT role_id FROM user_account
                    WHERE name LIKE %(name)s;
                    """,
                    {'name': name})
-    user_exists = bool(cursor.fetchone())
-    return user_exists
+    role_in_dict = cursor.fetchone()
+    return role_in_dict
 
 
 @connection.connection_handler
 def register_user(cursor, name, password):
-    user_exists = check_if_user_exists(name)
-    if user_exists:
+    role_in_dict = get_role_id_if_user_exists(name)
+    if role_in_dict:
         pass
     else:
         hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -200,18 +262,19 @@ def register_user(cursor, name, password):
 
 
 @connection.connection_handler
-def get_user_data(cursor, u_id):
-    cursor.execute("""SELECT name, role, registration_date FROM user_account
+def get_user_data(cursor, user_name):
+    cursor.execute("""SELECT user_account.id AS user_id, role, registration_date FROM user_account
                     JOIN user_role
                     ON role_id = user_role.id
-                    WHERE user_account.id = %(u_id)s;
-                    """, {"u_id": u_id})
+                    WHERE name = %(user_name)s;
+                    """, {"user_name": user_name})
     user_data = cursor.fetchall()
     return user_data
 
 
 @connection.connection_handler
-def edit_user_date(cursor, u_name, what_to_do):
+def edit_user_data(cursor, u_name, what_to_do):
+    print(u_name, what_to_do)
     if what_to_do == "delete":
         cursor.execute("DELETE FROM user_account WHERE name = %(u_name)s", {"u_name": u_name})
 
@@ -237,7 +300,8 @@ def get_user_reputation(cursor, u_id):
                 ON question.user_id = user_account.id
                 WHERE user_account.id = %(u_id)s AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
                 """, {"u_id": u_id})
-    return cursor.fetchall()
+    return cursor.fetchone()
+
 
 @connection.connection_handler
 def get_all_tags_questions(cursor):
@@ -250,3 +314,11 @@ def get_all_tags_questions(cursor):
                 ORDER BY name DESC;
                 """)
     return cursor.fetchall()
+
+
+
+@connection.connection_handler
+def get_user_id_by_user_name(cursor, name):
+    cursor.execute("SELECT id FROM user_account WHERE name=%(name)s", {'name': name})
+    user_id = cursor.fetchone()
+    return user_id

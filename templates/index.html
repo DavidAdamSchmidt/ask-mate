@@ -3,25 +3,19 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    {% if 'name' in session %}
     <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a><br>
+    {% endif %}
     <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a><br>
     <div>
         <h1>Questions</h1>
-        <form action="{{ url_for('route_search_results') }}" method="get">
-            <input name="search_phrase" id="search_phrase">
-            <input type="submit" id="submit" value="Search">
-        </form>
         <table>
             <tr>
                 {% set new_direction = 'desc' if current_dir else 'asc' %}
                 {% for key in question_list[0] %}
                     <th>
                         <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
-                            {% if key == 'user_id' %}
-                                Posted by
-                            {% else %}
-                                {{ key.capitalize().replace('_', ' ') }}
-                            {% endif %}
+                            {{ key.capitalize().replace('_', ' ') }}
                         </a>
                     </th>
                 {% endfor %}
@@ -46,24 +40,29 @@
                         <td>{{ value }}</td>
                     {% endif %}
                 {% endfor %}
+                {% if 'name' in session and (session.name != question.posted_by or session.role_id == 1) %}
                     <td class="no-border">
-                {% for operation in ['up', 'down'] %}
-                        {% set url = url_for(
-                            'route_question_votes',
-                            question_id = question.id,
-                            operation = operation
-                        ) %}
-                        <form action="{{ url }}" method="post">
-                            <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
-                        </form>
-
-                {% endfor %}
+                        {% for operation in ['up', 'down'] %}
+                                {% set url = url_for(
+                                    'route_question_votes',
+                                    question_id = question.id,
+                                    operation = operation
+                                ) %}
+                                <form action="{{ url }}" method="post">
+                                    <input type="submit" class="{{ operation }}" value="Vote {{ operation }}">
+                                </form>
+                        {% endfor %}
                     </td>
+                {% endif %}
                 </tr>
             {% endfor %}
         </table>
         <p>
-            <a href="{{ url_for('route_question_add') }}">Ask a question</a>
+            {% if 'name' in session %}
+                <a href="{{ url_for('route_question_add') }}">Ask a question</a>
+            {% else %}
+                You need to log in to ask a question
+            {% endif %}
         </p>
         <p>
             <a href="/list">Display all questions</a>
