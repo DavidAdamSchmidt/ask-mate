@@ -6,10 +6,9 @@ import bcrypt
 
 @connection.connection_handler
 def get_max_id(cursor, table):
-    cursor.execute("""
-                   SELECT MAX(id) FROM %(table)s;
-                   """,
-                   {'table': table})
+    cursor.execute(sql.SQL("""
+                   SELECT MAX(id) FROM {table};
+                   """).format(table=sql.Identifier(table)))
     id_ = cursor.fetchone()
     return id_
 
@@ -296,15 +295,13 @@ def register_user(cursor, name, password):
     if role_id:
         pass
     else:
-        hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        password_hash = hashed_bytes.decode('utf-8')
+        password_hash = hash_password(password)
         registration_date = datetime.now()
         cursor.execute("""
                        INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
                        %(name)s, %(password_hash)s, 2, %(registration_date)s);
                        """,
-                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date}
-                       )
+                       {'name': name, 'password_hash': password_hash, 'registration_date': registration_date})
 
 
 @connection.connection_handler
