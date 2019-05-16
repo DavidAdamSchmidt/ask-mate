@@ -85,6 +85,8 @@ def route_add_answer(question_id):
         new_answer["question_id"] = question_id
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_answer['user_id'] = user_id_dict['id']
+        if new_answer['image'] == '':
+            del new_answer['image']
         data_manager.insert_new_record('answer', new_answer)
         return redirect(f"/question/{question_id}")
     return render_template("add_edit.html", parent_id=question_id, parent='question', type='answer')

@@ -38,6 +38,7 @@ td {
 td.no-border {
     background-color: linen;
     border: none;
+    width: 100px;
 }
 
 input[type=submit] {
@@ -128,24 +129,14 @@ img:hover {
     transform: scale(5);
 }
 
-.delit{
-    height: 50px;
-    margin: 0px;
-    padding: 0px;
+#search-form {
+    display: inline-block;
 }
 
-.delit:hover {
-    transform: scale(2);
+#search-bar {
+    width: 350px;
 }
 
-#search_phrase {
-    position: absolute;
-    top: 2em;
-    right: 1em;
-}
-
-#submit {
-    position: absolute;
-    top: 2em;
-    right: 15em;
+.login {
+    float: right;
 }

@@ -107,17 +107,35 @@ def update_comment_by_primary_id(cursor, data, id):
 
 
 @connection.connection_handler
-def update_answer(cursor, message, image_url, id):
-    cursor.execute(
-        """UPDATE answer SET message= %(message)s, image= %(image_url)s
-            WHERE id=%(id)s""", {"message": message, "image_url": image_url, "id": id})
+def update_answer(cursor, message, image, id):
+    if image == '':
+        cursor.execute("""
+                       UPDATE answer SET message= %(message)s
+                       WHERE id=%(id)s
+                       """,
+                       {"message": message, "id": id})
+    else:
+        cursor.execute("""
+                       UPDATE answer SET message= %(message)s, image= %(image)s
+                       WHERE id=%(id)s
+                       """,
+                       {"message": message, "image": image, "id": id})
 
 
 @connection.connection_handler
 def update_question(cursor, id_, message, image, title):
-    cursor.execute(
-        """ UPDATE question SET title= %(title)s, message= %(message)s, image= %(image)s
-            WHERE id=%(id_)s;""", {"title": title, "message": message, "image": image, "id_": id_})
+    if image == '':
+        cursor.execute("""
+                       UPDATE question SET title= %(title)s, message= %(message)s
+                       WHERE id=%(id_)s;
+                       """,
+                       {"title": title, "message": message, "id_": id_})
+    else:
+        cursor.execute("""
+                       UPDATE question SET title= %(title)s, message= %(message)s, image= %(image)s
+                       WHERE id=%(id_)s;
+                       """,
+                       {"title": title, "message": message, "image": image, "id_": id_})
 
 
 @connection.connection_handler
@@ -151,7 +169,7 @@ def get_most_recent_questions(cursor, amount):
 @connection.connection_handler
 def get_search_results_from_database(cursor, search_phrase):
     cursor.execute('''
-                   SELECT DISTINCT ON (title) title, question.message FROM question
+                   SELECT DISTINCT ON(title) title, question.message FROM question
                    JOIN answer ON question.id = answer.question_id
                    WHERE title ILIKE %(search_phrase)s OR question.message
                    ILIKE %(search_phrase)s OR answer.message ILIKE %(search_phrase)s;

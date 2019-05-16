@@ -7,14 +7,17 @@
 </head>
 <body>
     <div id="menu">
-        <a href="{{ url_for('route_register_user') }}">Register</a>
-        <a href="{% if session %}{{ url_for('logout') }}{% else %}{{ url_for('route_login') }}{% endif %}"
-        >{% if session %}Logout{% else %}Login{% endif %}</a>
-        <p>{% if 'name' in session %}You are logged in as {{ session['name'] }}{% endif %}</p>
-        <form action="{{ url_for('route_search_results') }}" method="get">
-            <input name="search_phrase" id="search_phrase">
-            <input type="submit" id="submit" value="Search">
+        <form id="search-form" action="{{ url_for('route_search_results') }}" method="get">
+            <input id="search-bar" name="search_phrase" placeholder="looking for something?">
+            <input type="submit" value="Search">
         </form>
+        {% if 'name' in session %}
+            <span class="login">You are logged in as {{ session.name }}
+            <a href="{{ url_for('logout') }}">Logout</a></span>
+        {% else %}
+            <span class="login"><a href="{{ url_for('route_login') }}">Login</a>
+            <a href="{{ url_for('route_register_user') }}">Register</a></span>
+        {% endif %}
     </div>
     {% block content %}{% endblock %}
 </body>

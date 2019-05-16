@@ -80,16 +80,16 @@
         {% if type == 'question' %}
             <tr>
                 <td colspan="3">
-                    {{ tag.name if tag and tag.name else 'No rag added yet' }}
+                    {{ tag.name if tag and tag.name else 'No tag added yet' }}
                 </td>
                 <td colspan="3">
                     <a href="{{ url_for('route_add_edit_tag', question_id=table[0].id) }}">
-                        <img class="delit" src="/static/images/add-edit.jpeg" alt="Add/Edit Rag">
+                        Edit tag
                     </a>
                 </td>
                 <td colspan="2">
                     <a href="{{ url_for('route_delete_tag', tag=tag.id, question_id=table[0].id) }}">
-                        <img class="delit" src="/static/images/delete.png" alt="X">
+                        Delete tag
                     </a>
                 </td>
             </tr>
