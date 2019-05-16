@@ -244,10 +244,20 @@ def edit_user(name, what_to_do):
     return redirect("/")
 
 
-@app.route("/all-user", methods=['GET'])
+@app.route("/all-user", methods=["GET"])
 def route_list_all_users():
     data = data_manager.get_all_user_data()
     return render_template("user_page.html", data=data)
+
+
+@app.route("/all-tags", methods=["GET"])
+def route_list_all_tags():
+    unique_tags= []
+    tags = data_manager.get_all_tags_questions()
+    for tag in tags:
+        unique_tags.append(tag['tag'])
+    unique_tags = set(unique_tags)
+    return render_template("user_page.html", tags=tags, unique_tags=unique_tags)
 
 
 if __name__ == "__main__":

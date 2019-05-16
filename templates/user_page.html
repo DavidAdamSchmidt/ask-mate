@@ -18,7 +18,7 @@
         <a href="{{ url_for('route_user_page') }}">Back to my page</a><br>
         <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
         </body>
-        {% else %}
+        {% elif user %}
             <h1 id="user_title">{{ user['name'] }}</h1>
             <body>
                 <div id="u_details">
@@ -33,8 +33,21 @@
                     <a href="{{ url_for('edit_user', what_to_do = "delete", name = user['name']) }}">Delete User</a><br>
                 </div>
             <a href="{{ url_for('route_list_all_users') }}" {{ 'hidden' if user['role'] == 'user' else '' }}>List all users and their roles</a><br>
-            <a href="{{ url_for('route_list_all_users') }}" {{ 'hidden' if user['role'] == 'user' else '' }}>List all tags and their questions</a><br>
             <a href="{{ url_for('route_questions_list') }}">Back to the main page</a>
+            </body>
+        {% elif tags %}
+            <body>
+            {% for unique in unique_tags %}
+                <tr><th>{{ unique }}</th><br></tr>
+                {% for tag in tags %}
+                    {% if tag['tag'] == unique %}
+                        {% if tag['question_id'] != None %}
+                            <tr><td><a href="{{ url_for('route_question_display', question_id = tag['question_id']) }}">
+                                {{ tag['question_title'] }}</a></td><br></tr>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
             </body>
         {% endif %}
     {% endblock %}

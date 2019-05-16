@@ -3,7 +3,8 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a>
+    <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a><br>
+    <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a><br>
     <div>
         <h1>Questions</h1>
         <form action="{{ url_for('route_search_results') }}" method="get">

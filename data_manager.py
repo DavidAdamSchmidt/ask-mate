@@ -238,3 +238,15 @@ def get_user_reputation(cursor, u_id):
                 WHERE user_account.id = %(u_id)s AND (question.vote_number IS NOT NULL OR answer.vote_number IS NOT NULL);
                 """, {"u_id": u_id})
     return cursor.fetchall()
+
+@connection.connection_handler
+def get_all_tags_questions(cursor):
+    cursor.execute("""
+                SELECT question.id AS question_id, title as question_title, name AS tag FROM question
+                JOIN question_tag
+                ON question.id = question_tag.question_id
+                FULL JOIN tag
+                ON tag_id = tag.id
+                ORDER BY name DESC;
+                """)
+    return cursor.fetchall()
