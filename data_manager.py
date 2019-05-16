@@ -114,14 +114,14 @@ def update_answer(cursor, message, image_url, id):
 
 
 @connection.connection_handler
-def update_question(cursor, title, message, image, id_):
+def update_question(cursor, id_, message, image, title):
     cursor.execute(
         """ UPDATE question SET title= %(title)s, message= %(message)s, image= %(image)s
             WHERE id=%(id_)s;""", {"title": title, "message": message, "image": image, "id_": id_})
 
 
 @connection.connection_handler
-def get_sorted_questions(cursor, column_to_order_by, asc=True, limit=None):
+def get_sorted_questions(cursor, column_to_order_by, asc=True):
     order_direction = 'ASC' if asc is True else 'DESC'
     command = f"""SELECT question.id, submission_time, user_account.name
                   AS posted_by, view_number, vote_number, title, message, image
@@ -129,15 +129,23 @@ def get_sorted_questions(cursor, column_to_order_by, asc=True, limit=None):
                   WHERE submission_time IS NOT NULL
                   ORDER BY {column_to_order_by} {order_direction}
                   """
-    if limit:
-        cursor.execute("SELECT COUNT(*) FROM question;")
-        row_num = cursor.fetchone()['count']
-        if row_num < limit:
-            limit = row_num
-        command += f" OFFSET {row_num} - {limit} FETCH FIRST {limit} ROWS ONLY"
     cursor.execute(command)
     ordered_table = cursor.fetchall()
     return ordered_table
+
+
+@connection.connection_handler
+def get_most_recent_questions(cursor, amount):
+    cursor.execute("""
+                   SELECT question.id, user_account.name AS posted_by,
+                   question.submission_time, question.view_number, question.vote_number,
+                   question.title, question.message, question.image
+                   FROM question JOIN user_account ON question.user_id = user_account.id
+                   ORDER BY question.submission_time DESC LIMIT %(amount)s
+                   """,
+                   {'amount': amount})
+    questions = cursor.fetchall()
+    return questions
 
 
 @connection.connection_handler

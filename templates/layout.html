@@ -6,7 +6,7 @@
     <title>{% block title %}Welcome{% endblock %} | AskMate</title>
 </head>
 <body>
-    <div id="header">
+    <div id="menu">
         <a href="{{ url_for('route_register_user') }}">Register</a>
         <a href="{% if session %}{{ url_for('logout') }}{% else %}{{ url_for('route_login') }}{% endif %}"
         >{% if session %}Logout{% else %}Login{% endif %}</a>

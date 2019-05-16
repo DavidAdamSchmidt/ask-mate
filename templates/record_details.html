@@ -12,11 +12,11 @@
         {% for row in table %}
             <tr>
                 {% for key, value in row.items() %}
-                    {% if value == row.image %}
+                    {% if key == 'image' %}
                         {% if value is none %}
                             <td><p>No picture available</p></td>
                         {% else %}
-                            {% set url = url_for('static', filename=value) %}
+                            {% set url = url_for('static', filename='images/' + value) %}
                             <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
                     {% elif key == 'submission_time' and type == 'answer' and 'answer' not in request.path %}
@@ -138,9 +138,7 @@
             <p>There are no comments for this {{ main_type }}</p>
         {% endif %}
         <p>
-            <a href="{{ url_for('route_questions_list') }}">
-                Back to homepage
-            </a>
+            {% include 'footer.html' %}
         </p>
     </div>
 {% endblock %}

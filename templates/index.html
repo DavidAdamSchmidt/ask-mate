@@ -3,27 +3,37 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    {% set home = request.path == '/' %}
     <div>
-        <h1>Questions</h1>
+        <h1>{{ 'All' if whole_list else 'Most recent' }} questions</h1>
         <table>
             <tr>
                 {% set new_direction = 'desc' if current_dir else 'asc' %}
-                {% for key in question_list[0] %}
+                {% for key in questions[0] %}
                     <th>
-                        <a href="/list?order_by={{ key }}&order_direction={{ new_direction }}">
+                        {% if home %}
                             {{ key.capitalize().replace('_', ' ') }}
-                        </a>
+                        {% else %}
+                            {% set url = url_for(
+                                'route_all_questions_list',
+                                order_by=key,
+                                order_direction=new_direction
+                                ) %}
+                            <a href="{{ url }}">
+                                {{ key.capitalize().replace('_', ' ') }}
+                            </a>
+                        {% endif %}
                     </th>
                 {% endfor %}
             </tr>
-            {% for question in question_list %}
+            {% for question in questions%}
                 <tr>
                 {% for key, value in question.items() %}
-                    {% if value == question.image %}
+                    {% if key == 'image' %}
                         {% if value is none %}
                             <td><p>No picture available</p></td>
                         {% else %}
-                            {% set url = url_for('static', filename=value) %}
+                            {% set url = url_for('static', filename='images/' + value) %}
                             <td><img src="{{ url }}" alt="{{ value }}"></td>
                         {% endif %}
                     {% elif key == 'submission_time' %}
@@ -61,7 +71,12 @@
             {% endif %}
         </p>
         <p>
-            <a href="/list">Display all questions</a>
+            {% if home %}
+                <a href="{{ url_for('route_all_questions_list') }}">Display all questions</a>
+            {% endif %}
         </p>
+        {% if not home %}
+            {% include 'footer.html' %}
+        {% endif %}
     </div>
 {% endblock %}

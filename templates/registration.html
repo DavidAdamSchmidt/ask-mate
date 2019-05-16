@@ -3,14 +3,17 @@
 {% block title %}Registration page{% endblock %}
 
 {% block content %}
-<div>
-    <h1>{% if type == 'registration' %}Registration{% else %}Login{% endif %}</h1><br>
-    <form action="{% if type == 'registration' %}{{ url_for('route_register_user')}}{% else %}{{ url_for('route_login') }}{% endif %}" method="post">
-        <label for="name">Username</label><br><br>
-        <input name="name" id="name"><br><br>
-        <label for="password">Password</label><br><br>
-        <input type="password" name="password" id="password"><br><br>
-        <input type="submit" value="{% if type == 'registration' %}Create user{% else %}Login{% endif %}">
-    </form>
-</div>
+    <div>
+        <h1>{% if type == 'registration' %}Registration{% else %}Login{% endif %}</h1><br>
+        <form action="{% if type == 'registration' %}{{ url_for('route_register_user')}}{% else %}{{ url_for('route_login') }}{% endif %}" method="post">
+            <label for="name">Username</label><br><br>
+            <input name="name" id="name"><br><br>
+            <label for="password">Password</label><br><br>
+            <input type="password" name="password" id="password"><br><br>
+            <input type="submit" value="{% if type == 'registration' %}Create user{% else %}Login{% endif %}">
+        </form>
+        <p>
+            {% include 'footer.html' %}
+        </p>
+    </div>
 {% endblock %}

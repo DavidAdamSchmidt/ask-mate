@@ -6,17 +6,21 @@ app = Flask(__name__)
 app.secret_key = '\xc1N}\xd3\xf9\x15\xa3\n*7i\xa6'
 
 
-@app.route("/")
-@app.route("/list")
-def route_questions_list():
+@app.route('/')
+def route_recent_questions_list():
+    questions = data_manager.get_most_recent_questions(5)
+    return render_template('index.html', questions=questions)
+
+
+@app.route('/list')
+def route_all_questions_list():
     order_by = request.args.get("order_by")
     if not order_by:
         order_by = "submission_time"
     direction_ = request.args.get("order_direction")
     direction_ = True if direction_ == "asc" else False
-    limit = 5 if request.path == '/' else None
-    question_list = data_manager.get_sorted_questions(order_by, direction_, limit)
-    return render_template('index.html', question_list=question_list, current_dir=direction_)
+    questions = data_manager.get_sorted_questions(order_by, direction_)
+    return render_template('index.html', questions=questions, current_dir=direction_)
 
 
 @app.route("/question/<question_id>/vote-<operation>", methods=["GET", "POST"])
@@ -45,10 +49,6 @@ def route_question_display(question_id):
     else:
         tag = tag[0]['tag_id']
         current_tag = data_manager.get_record_by_id("tag", tag)
-    if request.method == 'POST':
-        new_q = request.form.to_dict()
-        data_manager.update_question(new_q['title'], new_q['message'], new_q['image'], question_id)
-        return redirect('/question/%s' % question_id)
     template_name = "record_details.html"
     question = data_manager.get_question_with_user_info(question_id)
     if question is None:
@@ -67,11 +67,12 @@ def route_answer_display(answer_id):
 
 @app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
 def route_edit_question(question_id):
+    edited_question = request.form.to_dict()
+    if edited_question:
+        data_manager.update_question(question_id, **edited_question)
+        return redirect(url_for('route_question_display', question_id=question_id))
     question = data_manager.get_record_by_id("question", question_id)
-    if question is None:
-        return render_template('record_details.html', question_id=question_id)
-    else:
-        return render_template('add_question.html', question=question)
+    return render_template('add_edit.html', data=question, type='question', id=question_id)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
@@ -117,11 +118,15 @@ def route_question_add():
         new_question = request.form.to_dict()
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_question['user_id'] = user_id_dict['id']
+        new_question['view_number'] = 0
+        new_question['vote_number'] = 0
+        if new_question['image'] == '':
+            del new_question['image']
         data_manager.insert_new_record('question', new_question)
         id_ = data_manager.get_max_id('question')
         id_ = id_['max']
         return redirect('/question/%s' % id_)
-    return render_template('add_question.html')
+    return render_template('add_edit.html', type='question')
 
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
@@ -237,7 +242,7 @@ def route_register_user():
     if request.method == 'POST':
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
-        return redirect(url_for("route_questions_list"))
+        return redirect(url_for("route_all_questions_list"))
     return render_template('registration.html', type='registration')
 
 
@@ -252,7 +257,7 @@ def route_login():
             if valid_user_data:
                 session['name'] = request.form['name']
                 session['role_id'] = role_id
-                return redirect(url_for('route_questions_list'))
+                return redirect(url_for('route_all_questions_list'))
     return render_template('registration.html', type='login')
 
 
@@ -260,7 +265,7 @@ def route_login():
 def logout():
     session.pop('name', None)
     session.pop('role_id', None)
-    return redirect(url_for('route_questions_list'))
+    return redirect(url_for('route_all_questions_list'))
 
 
 if __name__ == "__main__":
