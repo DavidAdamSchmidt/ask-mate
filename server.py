@@ -243,8 +243,11 @@ def route_delete_tag(question_id, tag):
 def route_register_user():
     if request.method == 'POST':
         user_data = request.form.to_dict()
-        data_manager.register_user(user_data['name'], user_data['password'])
-        return redirect(url_for('route_all_questions_list'))
+        success = data_manager.register_user(user_data['name'], user_data['password'])
+        if success:
+            return redirect(url_for('route_all_questions_list'))
+        msg = 'User already exists!'
+        return render_template('registration.html', type='registration', warning_message=msg)
     return render_template('registration.html', type='registration')
 
 
@@ -269,14 +272,9 @@ def logout():
     return redirect(url_for('route_all_questions_list'))
 
 
-# user_id is needed instead of integer
-@app.route('/user/', methods=['GET'])
-def route_user_page():
-    if 'name' in session:
-        user_name = session['name']
-    else:
-        user_name = None
-    user = data_manager.get_user_data(user_name)[0]
+@app.route('/user/<name>', methods=['GET'])
+def route_user_page(name):
+    user = data_manager.get_user_data(name)
     user_id = user['user_id']
     reputation = data_manager.get_user_reputation(user_id)
     if reputation is not None:
@@ -289,12 +287,20 @@ def route_user_page():
 
 @app.route('/edit-user/<name>/<what_to_do>', methods=['GET'])
 def edit_user(name, what_to_do):
+    if 'role_id' not in session or session['role_id'] != 1:
+        message = "You don't have the right to access this page"
+        return render_template('warning.html', message=message)
     data_manager.edit_user_data(name, what_to_do)
-    return logout()
+    if session['name'] == name:
+        logout()
+    return redirect(url_for('route_recent_questions_list'))
 
 
-@app.route('/all-user', methods=['GET'])
+@app.route('/all-users', methods=['GET'])
 def route_list_all_users():
+    if 'role_id' not in session or session['role_id'] != 1:
+        message = "You don't have the right to view this page"
+        return render_template('warning.html', message=message)
     data = data_manager.get_all_user_data()
     return render_template('user_page.html', data=data)
 

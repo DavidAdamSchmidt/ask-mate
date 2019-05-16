@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}{{ 'Home' if request.path == '/' else 'Questions' }}{% endblock %}
 
 {% block content %}
     {% set home = request.path == '/' %}
@@ -42,6 +42,12 @@
                                 {{ value }}
                             </a>
                         </td>
+                    {% elif key == 'posted_by' %}
+                        <td>
+                            <a href="{{ url_for('route_user_page', name=value) }}">
+                                {{ value }}
+                            </a>
+                        </td>
                     {% else %}
                         <td>{{ value }}</td>
                     {% endif %}
@@ -70,16 +76,14 @@
                 You need to log in to ask a question
             {% endif %}
         </p>
-        <p>
-            {% if home %}
-                <p>
-                    <a href="{{ url_for('route_all_questions_list') }}">Display all questions</a>
-                </p>
-                <p>
-                    <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a>
-                </p>
-            {% endif %}
-        </p>
+        {% if home %}
+            <p>
+                <a href="{{ url_for('route_all_questions_list') }}">Display all questions</a>
+            </p>
+            <p>
+                <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a>
+            </p>
+        {% endif %}
         {% if not home %}
             {% include 'footer.html' %}
         {% endif %}

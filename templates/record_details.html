@@ -25,6 +25,12 @@
                                 {{ value }}
                             </a>
                         </td>
+                    {% elif key == 'posted_by' %}
+                        <td>
+                            <a href="{{ url_for('route_user_page', name=value) }}">
+                                {{ value }}
+                            </a>
+                        </td>
                     {% else %}
                         <td>{{ value }}</td>
                     {% endif %}
@@ -79,19 +85,25 @@
         {% endfor %}
         {% if type == 'question' %}
             <tr>
-                <td colspan="3">
-                    {{ tag.name if tag and tag.name else 'No tag added yet' }}
+                {% set admin = 'role_id' in session and session.role_id == 1 %}
+                {% set has_tag = tag.name if tag and tag.name %}
+                <td colspan="{{ '3' if admin and has_tag else ('4' if 'name' in session else 8) }}">
+                    {{ tag.name if has_tag else 'No tag added yet' }}
                 </td>
-                <td colspan="3">
-                    <a href="{{ url_for('route_add_edit_tag', question_id=table[0].id) }}">
-                        Edit tag
-                    </a>
-                </td>
-                <td colspan="2">
-                    <a href="{{ url_for('route_delete_tag', tag=tag.id, question_id=table[0].id) }}">
-                        Delete tag
-                    </a>
-                </td>
+                {% if 'name' in session %}
+                    <td colspan="{{ '3' if admin and has_tag else '4' }}">
+                        <a href="{{ url_for('route_add_edit_tag', question_id=table[0].id) }}">
+                            Add/Edit tag
+                        </a>
+                    </td>
+                {% endif %}
+                {% if admin and has_tag %}
+                    <td colspan="2">
+                        <a href="{{ url_for('route_delete_tag', tag=tag.id, question_id=table[0].id) }}">
+                            Delete tag
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
         {% endif %}
     </table>

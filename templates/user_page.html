@@ -1,40 +1,41 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Tags
+    {{ 'User list' if data else ('User page' if user else 'Tags')  }}
 {% endblock %}
 
 {% block content %}
     <div>
         {% if data %}
+            <h1>User list</h1>
             <table>
                 <tr>
-                    <th>User name</th>
-                    <th>User role</th>
+                    <th>Name</th>
+                    <th>Role</th>
                     <th>Registration date</th>
                 </tr>
-                {% for item in data %}
+                {% for user in data %}
                 <tr>
-                    <td>{{ item['name'] }}</td>
-                    <td>{{ item['role'] }}</td>
-                    <td>{{ item['registration_date'] }}</td>
+                    <td><a href="{{ url_for('route_user_page', name=user.name) }}">{{ user.name }}</a></td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.registration_date }}</td>
                 </tr>
                 {% endfor %}
             </table>
         {% elif user %}
-            <h1 id="user_title">User page of {{ session.name }}</h1>
+            <h1 id="user_title">User page of {{ user.name }}</h1>
             <table>
                 <tr>
-                    <th>User name</th>
-                    <th>User role</th>
+                    <th>Name</th>
+                    <th>Role</th>
                     <th>Registration date</th>
                     {% if user.role == 'user' %}
                         <th>Reputation</th>
                     {% endif %}
                 </tr>
                 <tr>
-                    <td>{{ session.name }}</td>
-                    <td>{{ user.role.capitalize() }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.role }}</td>
                     <td>{{ user.registration_date }}</td>
                     {% if user.role == 'user' %}
                         <td>
@@ -47,10 +48,16 @@
                     {% endif %}
                 </tr>
             </table>
-            <p>
-                <a href="{{ url_for('edit_user', name=session.name, what_to_do='delete') }}">Delete User</a>
-            </p>
+            {% if 'role_id' in session and session.role_id == 1 %}
+                <p>
+                    <a href="{{ url_for('edit_user', name=user.name, what_to_do='delete') }}">Delete user</a>
+                </p>
+                <p>
+                    <a href="{{ url_for('route_list_all_users') }}">List all users</a>
+                </p>
+            {% endif %}
         {% elif tags %}
+            <h1>Tags and their questions</h1>
             <table>
                 {% for unique in unique_tags %}
                     <tr>

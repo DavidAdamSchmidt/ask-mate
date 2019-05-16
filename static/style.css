@@ -158,9 +158,10 @@ img:hover {
 
 .login {
     float: right;
+    margin-left: 15px;
 }
 
-a.login:hover, a.login:visited, a.login:link, a.login:active button {
-    margin-left: 10px;
-    text-decoration: none;
+.warning {
+    color: red;
+    font-weight: bold;
 }

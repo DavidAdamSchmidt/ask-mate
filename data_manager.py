@@ -165,8 +165,8 @@ def get_sorted_questions(cursor, column_to_order_by, asc=True):
 @connection.connection_handler
 def get_most_recent_questions(cursor, amount):
     cursor.execute("""
-                   SELECT question.id, user_account.name AS posted_by,
-                   question.submission_time, question.view_number, question.vote_number,
+                   SELECT question.id, question.submission_time,
+                   user_account.name AS posted_by, question.view_number, question.vote_number,
                    question.title, question.message, question.image
                    FROM question JOIN user_account ON question.user_id = user_account.id
                    ORDER BY question.submission_time DESC LIMIT %(amount)s
@@ -311,25 +311,28 @@ def get_role_id_if_user_exists(cursor, name):
 def register_user(cursor, name, password):
     role_id = get_role_id_if_user_exists(name)
     if role_id:
-        pass
+        return False
     else:
         password_hash = hash_password(password)
-        registration_date = datetime.now()
+        registration_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         cursor.execute("""
                        INSERT INTO user_account (name, password_hash, role_id, registration_date) VALUES (
                        %(name)s, %(password_hash)s, 2, %(registration_date)s);
                        """,
                        {'name': name, 'password_hash': password_hash, 'registration_date': registration_date})
+        return True
 
 
 @connection.connection_handler
 def get_user_data(cursor, user_name):
-    cursor.execute("""SELECT user_account.id AS user_id, role, registration_date FROM user_account
+    cursor.execute("""
+                    SELECT user_account.id AS user_id, name, role, registration_date FROM user_account
                     JOIN user_role
                     ON role_id = user_role.id
                     WHERE name = %(user_name)s;
-                    """, {"user_name": user_name})
-    user_data = cursor.fetchall()
+                    """,
+                   {"user_name": user_name})
+    user_data = cursor.fetchone()
     return user_data
 
 
