@@ -23,25 +23,25 @@ def route_all_questions_list():
     return render_template('index.html', questions=questions, current_dir=direction_)
 
 
-@app.route("/question/<question_id>/vote-<operation>", methods=["GET", "POST"])
+@app.route('/question/<question_id>/vote-<operation>', methods=['GET', 'POST'])
 def route_question_votes(question_id, operation):
-    if request.method == "POST":
-        op_change = "+1" if operation == "up" else "-1"
-        data_manager.update_vote_number("question", op_change, question_id)
+    if request.method == 'POST':
+        op_change = '+1' if operation == 'up' else '-1'
+        data_manager.update_vote_number('question', op_change, question_id)
     return redirect(request.referrer)
 
 
-@app.route("/answer/<answer_id>/vote-<operation>",  methods=["GET", "POST"])
+@app.route('/answer/<answer_id>/vote-<operation>',  methods=['GET', 'POST'])
 def route_answer_votes(answer_id, operation):
-    if request.method == "POST":
-        op_change = "+1" if operation == "up" else "-1"
-        data_manager.update_vote_number("answer", op_change, answer_id)
-        answer = data_manager.get_record_by_id("answer", answer_id)
-        return redirect(url_for("route_question_display", question_id=answer["question_id"]))
-    return redirect("")
+    if request.method == 'POST':
+        op_change = '+1' if operation == 'up' else '-1'
+        data_manager.update_vote_number('answer', op_change, answer_id)
+        answer = data_manager.get_record_by_id('answer', answer_id)
+        return redirect(url_for('route_question_display', question_id=answer['question_id']))
+    return redirect('')
 
 
-@app.route("/question/<question_id>", methods=['GET', 'POST'])
+@app.route('/question/<question_id>', methods=['GET', 'POST'])
 def route_question_display(question_id):
     tag = data_manager.get_tag_by_question_id(question_id)
     if tag == []:
@@ -54,18 +54,18 @@ def route_question_display(question_id):
     if question is None:
         return render_template(template_name, question_id=question_id)
     answers = data_manager.get_answers_by_question_id(question_id)
-    comments = data_manager.get_comment_by_parent_id("question_id", question_id)
+    comments = data_manager.get_comment_by_parent_id('question_id', question_id)
     return render_template(template_name, question=question, answers=answers, comments=comments, tag=current_tag)
 
 
 @app.route('/answer/<answer_id>')
 def route_answer_display(answer_id):
     answer = data_manager.get_answer_with_user_info(answer_id)
-    comments = data_manager.get_comment_by_parent_id("answer_id", answer_id)
+    comments = data_manager.get_comment_by_parent_id('answer_id', answer_id)
     return render_template('record_details.html', answer=answer, comments=comments)
 
 
-@app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
+@app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
 def route_edit_question(question_id):
     edited_question = request.form.to_dict()
     if edited_question:
@@ -75,24 +75,24 @@ def route_edit_question(question_id):
     return render_template('add_edit.html', data=question, type='question', id=question_id)
 
 
-@app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
+@app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def route_add_answer(question_id):
     if 'name' not in session:
         return render_template('warning.html', message='You need to log in to add an answer')
-    if request.method == "POST":
+    if request.method == 'POST':
         new_answer = request.form.to_dict()
-        new_answer["vote_number"] = 0
-        new_answer["question_id"] = question_id
+        new_answer['vote_number'] = 0
+        new_answer['question_id'] = question_id
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_answer['user_id'] = user_id_dict['id']
         if new_answer['image'] == '':
             del new_answer['image']
         data_manager.insert_new_record('answer', new_answer)
-        return redirect(f"/question/{question_id}")
-    return render_template("add_edit.html", parent_id=question_id, parent='question', type='answer')
+        return redirect(f'/question/{question_id}')
+    return render_template('add_edit.html', parent_id=question_id, parent='question', type='answer')
 
 
-@app.route("/question/<question_id>/delete", methods=["GET", "POST"])
+@app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def route_delete_question(question_id):
     answer_ids = data_manager.get_answer_ids(question_id)
     for answer_id in answer_ids:
@@ -101,18 +101,18 @@ def route_delete_question(question_id):
     data_manager.delete_by_id('question_tag', question_id, 'question_id')
     data_manager.delete_by_id('comment', question_id, 'question_id')
     data_manager.delete_by_id('question', question_id)
-    return redirect("/")
+    return redirect('/')
 
 
-@app.route("/answer/<answer_id>/delete", methods=["GET", "POST"])
+@app.route('/answer/<answer_id>/delete', methods=['GET', 'POST'])
 def route_delete_answer(answer_id):
-    answer = data_manager.get_record_by_id("answer", answer_id)
-    question_id = answer["question_id"]
+    answer = data_manager.get_record_by_id('answer', answer_id)
+    question_id = answer['question_id']
     data_manager.delete_by_id('answer', answer_id)
-    return redirect(url_for("route_question_display", question_id=question_id))
+    return redirect(url_for('route_question_display', question_id=question_id))
 
 
-@app.route("/add-question", methods=['GET', 'POST'])
+@app.route('/add-question', methods=['GET', 'POST'])
 def route_question_add():
     if 'name' not in session:
         return render_template('warning.html', message='You need to log in to ask a question')
@@ -144,7 +144,7 @@ def route_add_comment_to_question(question_id):
     return render_template('add_edit.html', parent_id=question_id, parent='question', type='comment')
 
 
-@app.route("/answer/<answer_id>/new_comment", methods=['GET', 'POST'])
+@app.route('/answer/<answer_id>/new_comment', methods=['GET', 'POST'])
 def route_add_comment_to_answer(answer_id):
     if 'name' not in session:
         return render_template('warning.html', message='You need to log in to add a comment')
@@ -152,8 +152,8 @@ def route_add_comment_to_answer(answer_id):
     if new_comment:
         user_id_dict = data_manager.get_user_id_by_user_name(session['name'])
         new_comment['user_id'] = user_id_dict['id']
-        data_manager.insert_new_record("comment", new_comment)
-        return redirect(url_for("route_answer_display", answer_id=answer_id))
+        data_manager.insert_new_record('comment', new_comment)
+        return redirect(url_for('route_answer_display', answer_id=answer_id))
     return render_template('add_edit.html', parent_id=answer_id, parent='answer', type='comment')
 
 
@@ -165,7 +165,7 @@ def route_edit_answer(answer_id):
         image = request.form.get('image')
         data_manager.update_answer(message, image, answer_id)
         return redirect(url_for('route_question_display', question_id=question_id))
-    answer = data_manager.get_record_by_id("answer", answer_id)
+    answer = data_manager.get_record_by_id('answer', answer_id)
     return render_template('add_edit.html', data=answer, id=answer_id, type='answer')
 
 
@@ -182,11 +182,11 @@ def route_edit_comment(comment_id):
             return redirect(url_for('route_question_display', question_id=parent_id))
         parent_id = request.form.get('answer_id')
         return redirect(url_for('route_answer_display', answer_id=parent_id))
-    comment = data_manager.get_record_by_id("comment", comment_id)
+    comment = data_manager.get_record_by_id('comment', comment_id)
     return render_template('add_edit.html', data=comment, id=comment_id, type='comment')
 
 
-@app.route("/search")
+@app.route('/search')
 def route_search_results():
     search_phrase = request.args.get('search_phrase')
     if search_phrase == '':
@@ -199,7 +199,7 @@ def route_search_results():
 @app.route('/comments/<comment_id>/delete', methods=['POST', 'GET'])
 def route_delete_comment(comment_id):
     if request.method == 'POST':
-        comment = data_manager.get_record_by_id("comment", comment_id)
+        comment = data_manager.get_record_by_id('comment', comment_id)
         data_manager.delete_by_id('comment', comment_id)
         if comment['question_id'] is not None:
             return redirect(f"/question/{comment['question_id']}")
@@ -207,7 +207,7 @@ def route_delete_comment(comment_id):
     return render_template('warning.html', message='Action denied')
 
 
-@app.route("/question/<question_id>/add-edit-tag", methods=['GET', 'POST'])
+@app.route('/question/<question_id>/add-edit-tag', methods=['GET', 'POST'])
 def route_add_edit_tag(question_id):
     tags = data_manager.get_basic_tags()
     tag_id = data_manager.get_tag_by_question_id(question_id)
@@ -215,45 +215,44 @@ def route_add_edit_tag(question_id):
         tag_id = None
     else:
         tag_id = tag_id[0]['tag_id']
-        tag_id = data_manager.get_record_by_id("tag", tag_id)
-    if request.method == "POST":
+        tag_id = data_manager.get_record_by_id('tag', tag_id)
+    if request.method == 'POST':
         ntag = request.form.to_dict()
         question_id = ntag['question_id']
-        if ntag['define_own'] == "":
+        if ntag['define_own'] == '':
             del ntag['define_own']
             ntag['name'] = ntag.pop('select')
         else:
             del ntag['select']
             ntag['name'] = ntag.pop('define_own')
-        if ntag['tag_id'] == "":
+        if ntag['tag_id'] == '':
             data_manager.insert_new_tag(ntag)
         else:
             data_manager.update_tag(ntag)
-        return redirect(f"/question/{question_id}")
+        return redirect(f'/question/{question_id}')
     return render_template('add_edit_tag.html', question_id=question_id, tags=tags, tag_id=tag_id)
 
 
-@app.route("/question/<question_id>/<tag>/delete")
+@app.route('/question/<question_id>/<tag>/delete')
 def route_delete_tag(question_id, tag):
     data_manager.delete_tags(question_id, tag)
-    return redirect(f"/question/{question_id}")
+    return redirect(f'/question/{question_id}')
 
 
-@app.route("/registration", methods=['GET', 'POST'])
+@app.route('/registration', methods=['GET', 'POST'])
 def route_register_user():
     if request.method == 'POST':
         user_data = request.form.to_dict()
         data_manager.register_user(user_data['name'], user_data['password'])
-        return redirect(url_for("route_all_questions_list"))
+        return redirect(url_for('route_all_questions_list'))
     return render_template('registration.html', type='registration')
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def route_login():
     if request.method == 'POST':
-        role_in_dict = data_manager.get_role_id_if_user_exists(request.form['name'])
-        if role_in_dict:
-            role_id = role_in_dict['role_id']
+        role_id = data_manager.get_role_id_if_user_exists(request.form['name'])
+        if role_id:
             password_hash = data_manager.get_password_hash_by_name(request.form['name'])
             valid_user_data = data_manager.verify_password(request.form['password'], password_hash)
             if valid_user_data:
@@ -263,12 +262,52 @@ def route_login():
     return render_template('registration.html', type='login')
 
 
-@app.route("/logout")
+@app.route('/logout')
 def logout():
     session.pop('name', None)
     session.pop('role_id', None)
     return redirect(url_for('route_all_questions_list'))
 
 
-if __name__ == "__main__":
+#user_id is needed instead of integer
+@app.route('/user/', methods=['GET'])
+def route_user_page():
+    if 'name' in session:
+        user_name = session['name']
+    else:
+        user_name = None
+    user = data_manager.get_user_data(user_name)[0]
+    user_id = user['user_id']
+    reputation = data_manager.get_user_reputation(user_id)
+    if reputation is not None:
+        if reputation['answer_votes'] is None:
+            reputation['answer_votes'] = 0
+        if reputation['question_votes'] is None:
+            reputation['question_votes'] = 0
+    return render_template('user_page.html', user=user, reputation=reputation)
+
+
+@app.route('/edit-user/<name>/<what_to_do>', methods=['GET'])
+def edit_user(name, what_to_do):
+    data_manager.edit_user_data(name, what_to_do)
+    return logout()
+
+
+@app.route('/all-user', methods=['GET'])
+def route_list_all_users():
+    data = data_manager.get_all_user_data()
+    return render_template('user_page.html', data=data)
+
+
+@app.route('/all-tags', methods=['GET'])
+def route_list_all_tags():
+    unique_tags= []
+    tags = data_manager.get_all_tags_questions()
+    for tag in tags:
+        unique_tags.append(tag['tag'])
+    unique_tags = set(unique_tags)
+    return render_template('user_page.html', tags=tags, unique_tags=unique_tags)
+
+
+if __name__ == '__main__':
     app.run(debug=True)

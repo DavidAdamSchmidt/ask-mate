@@ -140,3 +140,23 @@ img:hover {
 .login {
     float: right;
 }
+
+#user_title {
+    display: block;
+    alignment: center;
+}
+#u_details , #u_options {
+    display: inline-block;
+    align-content: center;
+    margin: 200px;
+    position: relative;
+
+}
+
+#u_details {
+
+}
+
+#u_options {
+
+}

@@ -3,9 +3,13 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    {% if 'name' in session %}
+    <a href="{{ url_for('route_user_page') }}">GET USER STUFF</a><br>
+    {% endif %}
+    <a href="{{ url_for('route_list_all_tags') }}">List all tags and their questions</a><br>
     {% set home = request.path == '/' %}
     <div>
-        <h1>{{ 'All' if whole_list else 'Most recent' }} questions</h1>
+        <h1>{{ 'Most recent' if home else 'All' }} questions</h1>
         <table>
             <tr>
                 {% set new_direction = 'desc' if current_dir else 'asc' %}
@@ -26,7 +30,7 @@
                     </th>
                 {% endfor %}
             </tr>
-            {% for question in questions%}
+            {% for question in questions %}
                 <tr>
                 {% for key, value in question.items() %}
                     {% if key == 'image' %}
