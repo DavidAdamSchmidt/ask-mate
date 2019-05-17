@@ -389,3 +389,42 @@ def get_user_id_by_user_name(cursor, name):
                    {'name': name})
     user_id = cursor.fetchone()
     return user_id
+
+
+@connection.connection_handler
+def get_questions_by_user_id(cursor, user_id):
+    cursor.execute("""
+                   SELECT id, submission_time, view_number, vote_number,
+                   title, message, image
+                   FROM question
+                   WHERE user_id = %(user_id)s
+                   """,
+                   {'user_id': user_id})
+    questions = cursor.fetchall()
+    return questions
+
+
+@connection.connection_handler
+def get_answers_by_user_id(cursor, user_id):
+    cursor.execute("""
+                   SELECT id, submission_time, vote_number, question_id,
+                   message, image
+                   FROM answer
+                   WHERE user_id = %(user_id)s
+                   """,
+                   {'user_id': user_id})
+    answers = cursor.fetchall()
+    return answers
+
+
+@connection.connection_handler
+def get_comments_by_user_id(cursor, user_id):
+    cursor.execute("""
+                   SELECT id, question_id, answer_id, message,
+                   submission_time, edited_count
+                   FROM comment
+                   WHERE user_id = %(user_id)s
+                   """,
+                   {'user_id': user_id})
+    comments = cursor.fetchall()
+    return comments

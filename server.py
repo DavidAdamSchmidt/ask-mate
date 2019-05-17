@@ -278,7 +278,16 @@ def route_user_page(name):
             reputation['answer_votes'] = 0
         if reputation['question_votes'] is None:
             reputation['question_votes'] = 0
-    return render_template('user-page.html', user=user, reputation=reputation)
+    questions = data_manager.get_questions_by_user_id(user_id)
+    answers = data_manager.get_answers_by_user_id(user_id)
+    comments = data_manager.get_comments_by_user_id(user_id)
+    return render_template(
+        'user-page.html',
+        user=user,
+        reputation=reputation,
+        questions=questions,
+        answers=answers,
+        comments=comments)
 
 
 @app.route('/edit-user/<name>/<what_to_do>', methods=['GET'])
@@ -294,9 +303,6 @@ def edit_user(name, what_to_do):
 
 @app.route('/all-users', methods=['GET'])
 def route_list_all_users():
-    if 'role_id' not in session or session['role_id'] != 1:
-        message = "You don't have the right to view this page"
-        return render_template('warning.html', message=message)
     data = data_manager.get_all_user_data()
     return render_template('user-page.html', data=data)
 
